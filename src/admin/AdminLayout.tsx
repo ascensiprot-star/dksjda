@@ -13,67 +13,40 @@ import { AdminNotificationsModal } from './AdminNotificationsModal';
 import { AdminProductEditorDrawer } from './products/AdminProductEditorDrawer';
 import { AdminSecurityGate } from './security/AdminSecurityGate';
 import { useStorefrontData } from '../context/StorefrontDataContext';
-import { TerminalLayout, type TerminalNavItem, type TerminalPlotData } from './TerminalLayout';
-import { TerminalScreens, type TerminalFnCode } from './terminal/TerminalScreens';
-import type { TerminalCurrency } from './terminal/terminalCharts';
-import type { TerminalPeriodKind, TerminalRegion } from './terminal/terminalMetrics';
+import { AtelierShell, type AtelierNavItem } from './AtelierShell';
+
+import { AdminDashboardView } from './dashboard/AdminDashboardView';
+import { AdminControlPlaneView } from './control/AdminControlPlaneView';
+import { AdminSystemHealthView } from './health/AdminSystemHealthView';
+import { AdminProductsView } from './products/AdminProductsView';
+import { AdminCollectionsView } from './collections/AdminCollectionsView';
+import { AdminCategoriesView } from './categories/AdminCategoriesView';
+import { AdminMediaView } from './media/AdminMediaView';
+import { AdminOrdersView } from './orders/AdminOrdersView';
+import { AdminInventoryView } from './inventory/AdminInventoryView';
+import { AdminDiscountsView } from './discounts/AdminDiscountsView';
+import { AdminCustomersView } from './customers/AdminCustomersView';
+import { AdminWaitlistView } from './waitlist/AdminWaitlistView';
+import { AdminSuggestionsView } from './suggestions/AdminSuggestionsView';
+import { AdminContentView } from './content/AdminContentView';
+import { AdminAnalyticsView } from './analytics/AdminAnalyticsView';
+import { AdminAdvisorView } from './advisor/AdminAdvisorView';
+import { AdminAtlasView } from './atlas/AdminAtlasView';
+import { AdminSecurityView } from './security/AdminSecurityView';
+import { AdminSettingsView } from './settings/AdminSettingsView';
 
 interface AdminLayoutProps {
   onBackToStorefront: () => void;
   onViewProductInStore: (product: Product) => void;
-}
-
-const VIEW_TO_TERMINAL: Record<string, { fn: TerminalFnCode; subTab?: number }> = {
-  dashboard: { fn: 'MON' },
-  control: { fn: 'CTL', subTab: 1 },
-  health: { fn: 'CTL', subTab: 2 },
-  atlas: { fn: 'CTL', subTab: 3 },
-  products: { fn: 'PRD', subTab: 2 },
-  collections: { fn: 'PRD', subTab: 3 },
-  categories: { fn: 'PRD', subTab: 4 },
-  media: { fn: 'PRD', subTab: 5 },
-  orders: { fn: 'ORD', subTab: 2 },
-  inventory: { fn: 'INV', subTab: 2 },
-  customers: { fn: 'CUS', subTab: 2 },
-  waitlist: { fn: 'CUS', subTab: 3 },
-  suggestions: { fn: 'CUS', subTab: 4 },
-  discounts: { fn: 'CUS', subTab: 5 },
-  content: { fn: 'CMS', subTab: 1 },
-  analytics: { fn: 'CMS', subTab: 2 },
-  advisor: { fn: 'ADV' },
-  security: { fn: 'SEC', subTab: 1 },
-  settings: { fn: 'SET' },
-};
-
-function resolveViewId(fn: TerminalFnCode, subTab: number): string {
-  if (fn === 'MON') return 'dashboard';
-  if (fn === 'CTL') return subTab === 2 ? 'health' : subTab === 3 ? 'atlas' : 'control';
-  if (fn === 'PRD') {
-    if (subTab === 3) return 'collections';
-    if (subTab === 4) return 'categories';
-    if (subTab === 5) return 'media';
-    return 'products';
-  }
-  if (fn === 'ORD') return 'orders';
-  if (fn === 'INV') return 'inventory';
-  if (fn === 'CUS') {
-    if (subTab === 3) return 'waitlist';
-    if (subTab === 4) return 'suggestions';
-    if (subTab === 5) return 'discounts';
-    return 'customers';
-  }
-  if (fn === 'CMS') return subTab === 2 ? 'analytics' : 'content';
-  if (fn === 'ADV') return 'advisor';
-  if (fn === 'SEC') return 'security';
-  if (fn === 'SET') return 'settings';
-  return 'dashboard';
+  previewMode?: boolean;
 }
 
 export const AdminLayout: React.FC<AdminLayoutProps> = ({
   onBackToStorefront,
   onViewProductInStore,
+  previewMode = false,
 }) => {
-  const { adminProfile } = useAuth();
+  const { adminProfile, role } = useAuth();
   const {
     products,
     collections,
@@ -86,25 +59,9 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
     refreshProducts,
   } = useStorefrontData();
 
-  // Terminal Function & Sub-Tab State
-  const [fn, setFn] = useState<TerminalFnCode>('MON');
-  const [activeSubTab, setActiveSubTab] = useState<number>(1);
-  const [requestedSubTab, setRequestedSubTab] = useState<{
-    fn: TerminalFnCode;
-    subTab: number;
-    nonce: number;
-  } | null>(null);
-
-  // Terminal Workspace Controls
-  const [region, setRegion] = useState<TerminalRegion>('ZJ OPS Global');
-  const [periodKind, setPeriodKind] = useState<TerminalPeriodKind>('Monthly');
-  const [periodCount, setPeriodCount] = useState<number>(12);
-  const [currency, setCurrency] = useState<TerminalCurrency>('EUR');
-  const [showPctCols, setShowPctCols] = useState<boolean>(true);
-  const [plotData, setPlotData] = useState<TerminalPlotData | null>(null);
+  const [activeViewId, setActiveViewId] = useState<string>('dashboard');
   const [toastMessage, setToastMessage] = useState<string>('');
   const toastTimerRef = useRef<number | null>(null);
-  const navNonceRef = useRef<number>(0);
 
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
@@ -114,8 +71,9 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
     }, 2800);
   }, []);
 
-  // Operations console lock gate
-  const [isTerminalLocked, setIsTerminalLocked] = useState<boolean>(() => {
+  // Operations console lock gate: unlocked on local previewMode unless operator clicks Lock
+  const [isConsoleLocked, setIsConsoleLocked] = useState<boolean>(() => {
+    if (previewMode) return false;
     const unlockedTs = sessionStorage.getItem('zejesh_sec_unlocked_ts');
     if (unlockedTs) {
       const elapsed = (Date.now() - parseInt(unlockedTs, 10)) / 1000 / 60;
@@ -129,10 +87,10 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
     return saved ? parseInt(saved, 10) : 15;
   });
 
-  // Security Audit Logs — real activity only
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
 
   const refreshAuditLogs = useCallback(async () => {
+    if (previewMode) return;
     try {
       const { data, error } = await supabase
         .from('auditLog')
@@ -145,15 +103,16 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
     } catch (err) {
       console.warn('Audit log load failed:', err);
     }
-  }, []);
+  }, [previewMode]);
 
   useEffect(() => {
-    refreshAuditLogs();
+    if (previewMode) return;
+    void refreshAuditLogs();
     try {
       const channel = supabase
         .channel('admin-audit-logs-channel')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'auditLog' }, () => {
-          refreshAuditLogs();
+          void refreshAuditLogs();
         })
         .subscribe();
       return () => {
@@ -163,33 +122,37 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
       console.warn('Audit log subscription failed:', err);
       return () => {};
     }
-  }, [refreshAuditLogs]);
+  }, [previewMode, refreshAuditLogs]);
 
   const handleUpdateAutoLock = (mins: number) => {
     setAutoLockMinutes(mins);
     localStorage.setItem('zejesh_sec_autolock_mins', mins.toString());
   };
 
-  const handleLockTerminalNow = useCallback(() => {
-    setIsTerminalLocked(true);
+  const handleLockConsoleNow = useCallback(() => {
+    setIsConsoleLocked(true);
     sessionStorage.removeItem('zejesh_sec_unlocked_ts');
-    void logAuditEvent(adminProfile?.email || 'admin', 'TERMINAL_LOCKED', 'Console Manual Lockout').finally(() =>
-      refreshAuditLogs()
-    );
-  }, [adminProfile?.email, refreshAuditLogs]);
+    if (!previewMode) {
+      void logAuditEvent(adminProfile?.email || 'admin', 'TERMINAL_LOCKED', 'Console Manual Lockout').finally(() =>
+        refreshAuditLogs()
+      );
+    }
+  }, [adminProfile?.email, previewMode, refreshAuditLogs]);
 
-  const handleUnlockTerminal = () => {
-    setIsTerminalLocked(false);
+  const handleUnlockConsole = () => {
+    setIsConsoleLocked(false);
     sessionStorage.setItem('zejesh_sec_unlocked_ts', Date.now().toString());
-    void logAuditEvent(adminProfile?.email || 'admin', 'TERMINAL_UNLOCKED', 'Security Gate Clearance').finally(() =>
-      refreshAuditLogs()
-    );
+    if (!previewMode) {
+      void logAuditEvent(adminProfile?.email || 'admin', 'TERMINAL_UNLOCKED', 'Security Gate Clearance').finally(() =>
+        refreshAuditLogs()
+      );
+    }
   };
 
   // Inactivity Auto-Lock Detector
   const lastActivityRef = useRef<number>(Date.now());
   useEffect(() => {
-    if (autoLockMinutes === 0) return;
+    if (autoLockMinutes === 0 || previewMode) return;
 
     const resetTimer = () => {
       lastActivityRef.current = Date.now();
@@ -199,10 +162,10 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
     events.forEach((ev) => window.addEventListener(ev, resetTimer, { passive: true }));
 
     const checkInterval = setInterval(() => {
-      if (!isTerminalLocked) {
+      if (!isConsoleLocked) {
         const elapsedMinutes = (Date.now() - lastActivityRef.current) / (1000 * 60);
         if (elapsedMinutes >= autoLockMinutes) {
-          handleLockTerminalNow();
+          handleLockConsoleNow();
         }
       }
     }, 15000);
@@ -211,7 +174,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
       events.forEach((ev) => window.removeEventListener(ev, resetTimer));
       clearInterval(checkInterval);
     };
-  }, [autoLockMinutes, isTerminalLocked, handleLockTerminalNow]);
+  }, [autoLockMinutes, isConsoleLocked, previewMode, handleLockConsoleNow]);
 
   // Real production datasets
   const [orders, setOrders] = useState<Order[]>([]);
@@ -227,7 +190,6 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   });
   const [insights] = useState<AiInsight[]>([]);
 
-  // Daily statistics computed from real orders only.
   const realDailyStats: DailyStat[] = useMemo(() => {
     if (orders.length === 0) return [];
     const map: Record<string, DailyStat> = {};
@@ -253,6 +215,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   }, [orders]);
 
   useEffect(() => {
+    if (previewMode) return;
     const unsubOrders = subscribeToOrders((liveOrders) => setOrders(liveOrders));
     const unsubCust = subscribeToCustomers((liveCust) => setCustomers(liveCust));
     const unsubWait = subscribeToWaitlist((liveWait) => setWaitlist(liveWait));
@@ -262,24 +225,14 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
       unsubCust();
       unsubWait();
     };
-  }, []);
+  }, [previewMode]);
 
-  // Control Plane Live Telemetry Overview
   const [controlOverview, setControlOverview] = useState<{
     overallStatus?: string;
-    activeIncidents?: number;
-    unacknowledgedAlerts?: number;
-    failingProbes?: number;
-    services?: Array<{
-      id: string;
-      name: string;
-      status: string;
-      latencyMs?: number | null;
-      uptime24h?: number | null;
-    }>;
   } | null>(null);
 
   useEffect(() => {
+    if (previewMode) return;
     let cancelled = false;
     const loadControl = async () => {
       try {
@@ -293,13 +246,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
         if (!res.ok) return;
         const json = await res.json();
         if (!cancelled && json && typeof json === 'object') {
-          setControlOverview({
-            overallStatus: json.overallStatus,
-            activeIncidents: json.activeIncidents,
-            unacknowledgedAlerts: json.unacknowledgedAlerts,
-            failingProbes: json.failingProbes,
-            services: json.services,
-          });
+          setControlOverview({ overallStatus: json.overallStatus || json.status });
         }
       } catch {
         // Silently degrade if control plane endpoint is offline
@@ -312,20 +259,16 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
       cancelled = true;
       window.clearInterval(iv);
     };
-  }, []);
+  }, [previewMode]);
 
-  // Command palette & notifications state
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-
-  // Product Editor Drawer State
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isEditorDrawerOpen, setIsEditorDrawerOpen] = useState(false);
-
-  // Live operator presence
   const [liveVisitors, setLiveVisitors] = useState(0);
 
   useEffect(() => {
+    if (previewMode) return;
     let cancelled = false;
 
     const loadLiveVisitors = async () => {
@@ -344,18 +287,19 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
       }
     };
 
-    loadLiveVisitors();
+    void loadLiveVisitors();
     const timer = window.setInterval(loadLiveVisitors, 60000);
 
     return () => {
       cancelled = true;
       window.clearInterval(timer);
     };
-  }, []);
+  }, [previewMode]);
 
   const openOrdersBadge = orders.filter(
     (o) => !['delivered', 'cancelled', 'refunded'].includes(o.status)
   ).length;
+
   const lowStockBadge = products.filter((p) => {
     const stk = p.variants?.length
       ? p.variants.reduce((s, v) => s + (v.stock || 0), 0)
@@ -363,158 +307,252 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
     return stk <= 4;
   }).length;
 
-  const navItems: TerminalNavItem[] = useMemo(
+  const navItems: AtelierNavItem[] = useMemo(
     () => [
-      { id: 'dashboard', group: 'Command', label: 'Overview', fn: 'MON', description: 'Live house monitor & command overview' },
-      { id: 'control', group: 'Command', label: 'Control Plane', fn: 'CTL', subTab: 1, description: 'Infrastructure & operational intelligence' },
-      { id: 'health', group: 'Command', label: 'System Health', fn: 'CTL', subTab: 2, description: 'Live service probes & diagnostics' },
-      { id: 'products', group: 'Product', label: 'Products & Archive', fn: 'PRD', subTab: 2, badge: products.length, description: 'Garment catalog & pricing CRUD' },
-      { id: 'collections', group: 'Product', label: 'Collections & Drops', fn: 'PRD', subTab: 3, badge: collections.length, description: 'Seasons & numbered releases' },
-      { id: 'categories', group: 'Product', label: 'Categories', fn: 'PRD', subTab: 4, description: 'Catalogue taxonomy & routing' },
-      { id: 'media', group: 'Product', label: 'Media Library', fn: 'PRD', subTab: 5, description: 'Cinematic campaign storage & targets' },
-      { id: 'orders', group: 'Product', label: 'Order Book', fn: 'ORD', subTab: 2, badge: openOrdersBadge, description: 'Fulfilment, tracking & settlement CRUD' },
-      { id: 'inventory', group: 'Product', label: 'Inventory Control', fn: 'INV', subTab: 2, badge: lowStockBadge || undefined, description: 'Size matrix & stock adjustments' },
-      { id: 'discounts', group: 'Product', label: 'Discounts', fn: 'CUS', subTab: 5, description: 'Promo codes & private client privileges' },
-      { id: 'customers', group: 'Growth', label: 'Clients', fn: 'CUS', subTab: 2, badge: customers.length, description: 'Client directory & LTV breakdown' },
-      { id: 'waitlist', group: 'Growth', label: 'Waitlists', fn: 'CUS', subTab: 3, badge: waitlist.length || undefined, description: 'Private archive demand queue' },
-      { id: 'suggestions', group: 'Growth', label: 'Suggestions & Votes', fn: 'CUS', subTab: 4, description: 'Client proposals & community poll governance' },
-      { id: 'content', group: 'Studio', label: 'Hero Slides & CMS', fn: 'CMS', subTab: 1, badge: content?.heroSlides?.length, description: 'Editorial storytelling & film slots' },
-      { id: 'analytics', group: 'Studio', label: 'Analytics (40)', fn: 'CMS', subTab: 2, description: '40 live commercial trajectories' },
-      { id: 'advisor', group: 'Studio', label: 'AI Advisor', fn: 'ADV', description: 'Strategic decision support' },
-      { id: 'atlas', group: 'Control', label: 'System Atlas', fn: 'CTL', subTab: 3, description: 'Every operating surface' },
-      { id: 'security', group: 'Control', label: 'Security & Audit', fn: 'SEC', subTab: 1, description: 'Auto-lock gate & audit trail' },
-      { id: 'settings', group: 'Control', label: 'Settings', fn: 'SET', description: 'House VAT, currency & shipping tiers' },
+      { id: 'dashboard', group: 'Command', label: 'Overview', description: 'House command monitor, telemetry & live posture' },
+      { id: 'control', group: 'Command', label: 'Control Plane', description: 'Infrastructure diagnostics, alerts & SLOs' },
+      { id: 'health', group: 'Command', label: 'System Health', description: 'Live service probes & endpoint checks' },
+
+      { id: 'products', group: 'Catalogue', label: 'Products & Archive', badge: products.length, description: 'Garment catalog, pricing & variant CRUD' },
+      { id: 'collections', group: 'Catalogue', label: 'Collections & Drops', badge: collections.length, description: 'Seasons & numbered releases' },
+      { id: 'categories', group: 'Catalogue', label: 'Categories', badge: categories.length, description: 'Catalogue taxonomy & routing' },
+      { id: 'media', group: 'Catalogue', label: 'Media Library', description: 'Editorial imagery & campaign slots' },
+
+      { id: 'orders', group: 'Commerce', label: 'Order Book', badge: openOrdersBadge, description: 'Fulfillment, tracking & settlement ledger' },
+      { id: 'inventory', group: 'Commerce', label: 'Inventory Control', badge: lowStockBadge || undefined, description: 'Size matrix & stock adjustments' },
+      { id: 'discounts', group: 'Commerce', label: 'Discounts', description: 'Promo codes & private client privileges' },
+
+      { id: 'customers', group: 'Clientele', label: 'Clients', badge: customers.length, description: 'Client directory & LTV breakdown' },
+      { id: 'waitlist', group: 'Clientele', label: 'Waitlists', badge: waitlist.length || undefined, description: 'Private archive demand queue' },
+      { id: 'suggestions', group: 'Clientele', label: 'Suggestions & Votes', description: 'Client proposals & community poll governance' },
+
+      { id: 'content', group: 'House', label: 'Hero Slides & CMS', badge: content?.heroSlides?.length, description: 'Editorial storytelling, journal & film slots' },
+      { id: 'analytics', group: 'House', label: 'Analytics (40)', description: '40 live commercial trajectories' },
+      { id: 'advisor', group: 'House', label: 'AI Advisor', description: 'Strategic decision intelligence' },
+      { id: 'atlas', group: 'House', label: 'System Atlas', description: 'Registry of every surface, table & probe' },
+      { id: 'security', group: 'House', label: 'Security & Audit', description: 'Auto-lock gate & audit trail' },
+      { id: 'settings', group: 'House', label: 'Settings', description: 'House VAT, currency & shipping tiers' },
     ],
-    [products.length, collections.length, openOrdersBadge, lowStockBadge, customers.length, waitlist.length, content?.heroSlides?.length]
+    [
+      products.length,
+      collections.length,
+      categories.length,
+      openOrdersBadge,
+      lowStockBadge,
+      customers.length,
+      waitlist.length,
+      content?.heroSlides?.length,
+    ]
   );
 
-  const navigateFn = useCallback((nextFn: TerminalFnCode, subTab?: number) => {
-    setFn(nextFn);
-    if (typeof subTab === 'number') {
-      setActiveSubTab(subTab);
-      navNonceRef.current += 1;
-      setRequestedSubTab({ fn: nextFn, subTab, nonce: navNonceRef.current });
-    } else {
-      setActiveSubTab(1);
+  const handleExportOrdersCsv = useCallback(() => {
+    const headers = ['Order_Ref', 'Date', 'Client', 'Email', 'Status', 'Total_EUR'];
+    const rows = orders.map((o) => [
+      o.number,
+      (o.createdAt || '').slice(0, 10),
+      `"${(o.customer?.name || 'Guest').replaceAll('"', '""')}"`,
+      o.customer?.email || '',
+      o.status,
+      String(o.totals?.total || 0),
+    ]);
+    const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `zejesh-orders-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    showToast(`Exported ${orders.length} orders to CSV`);
+  }, [orders, showToast]);
+
+  const operatorName = adminProfile?.name || (previewMode ? 'Atelier Preview' : 'Operator');
+  const operatorEmail = adminProfile?.email || 'operator@zejesh.fi';
+  const operatorRole = adminProfile?.role || role || 'Administrator';
+
+  const renderActiveView = () => {
+    switch (activeViewId) {
+      case 'dashboard':
+        return (
+          <AdminDashboardView
+            adminName={operatorName}
+            role={operatorRole}
+            products={products}
+            orders={orders}
+            customers={customers}
+            waitlist={waitlist}
+            collections={collections}
+            liveVisitors={liveVisitors}
+            onNavigateView={setActiveViewId}
+          />
+        );
+      case 'control':
+        return <AdminControlPlaneView />;
+      case 'health':
+        return <AdminSystemHealthView />;
+      case 'products':
+        return (
+          <AdminProductsView
+            products={products}
+            onEditProduct={(p) => {
+              setEditingProduct(p);
+              setIsEditorDrawerOpen(true);
+            }}
+            onCreateProduct={() => {
+              setEditingProduct(null);
+              setIsEditorDrawerOpen(true);
+            }}
+            onViewProductInStore={onViewProductInStore}
+            onRefresh={refreshProducts}
+            onDeleteProduct={deleteProduct}
+            onDeleteProducts={deleteProducts}
+          />
+        );
+      case 'collections':
+        return (
+          <AdminCollectionsView
+            collections={collections}
+            products={products}
+            onRefresh={refreshProducts}
+          />
+        );
+      case 'categories':
+        return (
+          <AdminCategoriesView
+            categories={categories}
+            onRefresh={refreshProducts}
+          />
+        );
+      case 'media':
+        return <AdminMediaView products={products} />;
+      case 'orders':
+        return <AdminOrdersView orders={orders} onRefresh={refreshProducts} />;
+      case 'inventory':
+        return <AdminInventoryView products={products} onRefresh={refreshProducts} />;
+      case 'discounts':
+        return <AdminDiscountsView discounts={discounts} onRefresh={refreshProducts} />;
+      case 'customers':
+        return <AdminCustomersView customers={customers} />;
+      case 'waitlist':
+        return (
+          <AdminWaitlistView
+            waitlist={waitlist}
+            collections={collections}
+            onRefresh={refreshProducts}
+          />
+        );
+      case 'suggestions':
+        return <AdminSuggestionsView />;
+      case 'content':
+        return content ? (
+          <AdminContentView content={content} onRefresh={refreshProducts} />
+        ) : (
+          <div className="border border-paper-a18 p-6 text-[13px] text-paper-a45">
+            Loading storefront editorial slots…
+          </div>
+        );
+      case 'analytics':
+        return (
+          <AdminAnalyticsView
+            products={products}
+            dailyStats={realDailyStats}
+            orders={orders}
+          />
+        );
+      case 'advisor':
+        return (
+          <AdminAdvisorView
+            products={products}
+            dailyStats={realDailyStats}
+            insights={insights}
+            onRefresh={refreshProducts}
+            onNavigateView={setActiveViewId}
+          />
+        );
+      case 'atlas':
+        return (
+          <AdminAtlasView
+            products={products}
+            orders={orders}
+            customers={customers}
+            waitlist={waitlist}
+            collections={collections}
+            onNavigateView={setActiveViewId}
+          />
+        );
+      case 'security':
+        return (
+          <AdminSecurityView
+            autoLockMinutes={autoLockMinutes}
+            onUpdateAutoLock={handleUpdateAutoLock}
+            onLockTerminalNow={handleLockConsoleNow}
+            auditLogs={auditLogs}
+          />
+        );
+      case 'settings':
+        return settings ? (
+          <AdminSettingsView settings={settings} onRefresh={refreshProducts} />
+        ) : (
+          <div className="border border-paper-a18 p-6 text-[13px] text-paper-a45">
+            Loading store settings…
+          </div>
+        );
+      default:
+        return (
+          <AdminDashboardView
+            adminName={operatorName}
+            role={operatorRole}
+            products={products}
+            orders={orders}
+            customers={customers}
+            waitlist={waitlist}
+            collections={collections}
+            liveVisitors={liveVisitors}
+            onNavigateView={setActiveViewId}
+          />
+        );
     }
-  }, []);
-
-  const navigateView = useCallback((viewId: string) => {
-    const target = VIEW_TO_TERMINAL[viewId] || { fn: 'MON' as TerminalFnCode };
-    setFn(target.fn);
-    const sub = target.subTab ?? 1;
-    setActiveSubTab(sub);
-    navNonceRef.current += 1;
-    setRequestedSubTab({
-      fn: target.fn,
-      subTab: sub,
-      nonce: navNonceRef.current,
-    });
-  }, []);
-
-  const activeViewId = useMemo(() => resolveViewId(fn, activeSubTab), [fn, activeSubTab]);
+  };
 
   return (
     <>
       <AdminSecurityGate
-        isLocked={isTerminalLocked}
-        onUnlock={handleUnlockTerminal}
+        isLocked={isConsoleLocked}
+        onUnlock={handleUnlockConsole}
         onExitToStore={onBackToStorefront}
       />
 
-      <TerminalLayout
-        fn={fn}
-        activeSubTab={activeSubTab}
+      <AtelierShell
         activeViewId={activeViewId}
         navItems={navItems}
-        onNavigateFn={navigateFn}
-        onNavigateView={navigateView}
-        region={region}
-        onChangeRegion={setRegion}
-        currency={currency}
-        onChangeCurrency={setCurrency}
-        periodKind={periodKind}
-        onChangePeriodKind={setPeriodKind}
-        showPctCols={showPctCols}
-        onChangeShowPctCols={setShowPctCols}
-        products={products}
-        orders={orders}
-        customers={customers}
-        waitlist={waitlist}
-        collections={collections}
-        categories={categories}
-        discounts={discounts}
-        auditLogs={auditLogs}
-        settings={settings}
-        liveVisitors={liveVisitors}
-        controlOverview={controlOverview}
-        notificationCount={openOrdersBadge + lowStockBadge}
-        onOpenNotifications={() => setIsNotificationsOpen(true)}
+        onNavigateView={setActiveViewId}
         onOpenPalette={() => setIsCommandPaletteOpen(true)}
-        onLockTerminal={handleLockTerminalNow}
+        onOpenNotifications={() => setIsNotificationsOpen(true)}
         onCreateProduct={() => {
           setEditingProduct(null);
           setIsEditorDrawerOpen(true);
         }}
-        onRefreshStore={refreshProducts}
+        onExportOrdersCsv={handleExportOrdersCsv}
+        onRefreshStore={() => {
+          refreshProducts();
+          showToast('Synced store data');
+        }}
+        onLockConsole={handleLockConsoleNow}
         onBackToStorefront={onBackToStorefront}
-        plotData={plotData}
-        onClearPlot={() => setPlotData(null)}
+        notificationCount={openOrdersBadge + lowStockBadge}
+        adminName={operatorName}
+        adminEmail={operatorEmail}
+        adminRole={operatorRole}
+        liveVisitors={liveVisitors}
+        controlStatus={controlOverview?.overallStatus}
+        previewMode={previewMode}
         toastMessage={toastMessage}
-        onToast={showToast}
       >
-        <TerminalScreens
-          fn={fn}
-          onNavigateFn={(nextFn) => navigateFn(nextFn)}
-          onNavigateLegacyView={navigateView}
-          requestedSubTab={requestedSubTab}
-          onSubTabChange={(changedFn, nextSub) => {
-            if (changedFn === fn) setActiveSubTab(nextSub);
-          }}
-          region={region}
-          onChangeRegion={setRegion}
-          periodKind={periodKind}
-          onChangePeriodKind={setPeriodKind}
-          periodCount={periodCount}
-          onChangePeriodCount={setPeriodCount}
-          currency={currency}
-          onChangeCurrency={setCurrency}
-          showPctCols={showPctCols}
-          onPlotMetric={(title, labels, values) => setPlotData({ title, labels, values })}
-          onToast={showToast}
-          products={products}
-          orders={orders}
-          customers={customers}
-          waitlist={waitlist}
-          collections={collections}
-          categories={categories}
-          discounts={discounts}
-          content={content}
-          settings={settings}
-          auditLogs={auditLogs}
-          liveVisitors={liveVisitors}
-          realDailyStats={realDailyStats}
-          insights={insights}
-          autoLockMinutes={autoLockMinutes}
-          onUpdateAutoLock={handleUpdateAutoLock}
-          onLockTerminalNow={handleLockTerminalNow}
-          onEditProduct={(p) => {
-            setEditingProduct(p);
-            setIsEditorDrawerOpen(true);
-          }}
-          onCreateProduct={() => {
-            setEditingProduct(null);
-            setIsEditorDrawerOpen(true);
-          }}
-          onViewProductInStore={onViewProductInStore}
-          onRefreshProducts={refreshProducts}
-          onDeleteProduct={deleteProduct}
-          onDeleteProducts={deleteProducts}
-          controlOverview={controlOverview}
-        />
-      </TerminalLayout>
+        {renderActiveView()}
+      </AtelierShell>
 
-      {/* Global Command Palette (Cmd+K), Notifications & Product Drawer in Terminal Scope */}
       <div className="admin-scope">
         <AdminCommandPalette
           isOpen={isCommandPaletteOpen}
@@ -524,7 +562,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             setEditingProduct(p);
             setIsEditorDrawerOpen(true);
           }}
-          onNavigateView={navigateView}
+          onNavigateView={setActiveViewId}
         />
 
         <AdminNotificationsModal
@@ -533,7 +571,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           products={products}
           orders={orders}
           insights={insights}
-          onNavigateView={navigateView}
+          onNavigateView={setActiveViewId}
         />
 
         <AdminProductEditorDrawer

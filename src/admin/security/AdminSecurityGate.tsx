@@ -187,65 +187,65 @@ export const AdminSecurityGate: React.FC<AdminSecurityGateProps> = ({
   };
 
   return (
-    <div className="admin-scope admin-gate-page fixed inset-0 z-[120] bg-ink text-paper flex flex-col justify-between p-4 sm:p-8 md:p-10 select-none animate-fadeIn">
+    <div className="admin-scope admin-gate-page fixed inset-0 z-[120] flex select-none flex-col justify-between bg-white p-4 text-black animate-fadeIn sm:p-8 md:p-10">
       {/* Top security header */}
-      <div className="flex items-center justify-between pb-3 border-b-2 border-[#9c1a1f] max-w-5xl w-full mx-auto">
+      <div className="mx-auto flex w-full max-w-5xl items-center justify-between border-b border-black/15 pb-3">
         <div className="flex items-center gap-3">
-          <div className="w-2 h-2 bg-[#ffa21f]" />
-          <span className="micro-sm text-[#ffa21f]">
-            ZEJESH // MANAGEMENT TERMINAL GATE · SEC-01
+          <div className="h-2 w-2 bg-black" />
+          <span className="micro-sm text-black/70">
+            ZEJESH · Atelier Security Gate
           </span>
         </div>
         <button
           type="button"
           onClick={onExitToStore}
-          className="micro-sm text-paper-a45 hover:text-[#ffa21f] flex items-center gap-1.5 transition-colors cursor-pointer py-1 px-2 border border-[#2c2c2c]"
+          className="micro-sm flex cursor-pointer items-center gap-1.5 border border-black/15 px-3 py-1.5 text-black/65 transition-colors hover:border-black hover:text-black"
         >
-          <ArrowLeft className="w-3.5 h-3.5" strokeWidth={1.5} />
-          <span>EXIT TO STOREFRONT</span>
+          <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.5} />
+          <span>Return to Storefront</span>
         </button>
       </div>
 
       {/* Center authentication card */}
-      <div className="max-w-md w-full mx-auto my-auto py-6 sm:py-8">
-        <div className="p-6 sm:p-8 border border-[#333333] border-t-2 border-t-[#ffa21f] bg-[#050505] relative">
-          <div className="w-11 h-11 mx-auto flex items-center justify-center mb-5 border border-[#ffa21f]/50 bg-[#140e00] text-[#ffa21f]">
+      <div className="mx-auto my-auto w-full max-w-md py-6 sm:py-8">
+        <div className="relative border border-black/15 border-t-2 border-t-black bg-white p-6 sm:p-8">
+          <div className="mx-auto mb-5 flex h-11 w-11 items-center justify-center border border-black/20 bg-[#fafafa] text-black">
             {step === 'mfa' ? (
-              <Smartphone className="w-5 h-5" strokeWidth={1.5} />
+              <Smartphone className="h-5 w-5" strokeWidth={1.5} />
             ) : (
-              <Key className="w-5 h-5" strokeWidth={1.5} />
+              <Key className="h-5 w-5" strokeWidth={1.5} />
             )}
           </div>
 
-          <div className="text-center mb-7">
-            <span className="micro-sm text-[#42c6ff] block mb-2">
-              ADMINISTRATIVE SESSION VERIFIED
+          <div className="mb-7 text-center">
+            <span className="micro-sm mb-2 block text-black/50">
+              Administrative Session Verified
             </span>
-            <h1 className="font-display text-[26px] font-semibold leading-[1.15] text-[#ffa21f] mb-2.5">
-              {step === 'mfa' ? 'TWO-FACTOR AUTHENTICATION' : 'ENTER TERMINAL KEYS'}
+            <h1 className="mb-2.5 font-display text-[28px] font-light leading-[1.1] text-black">
+              {step === 'mfa' ? 'Two-Factor Verification' : 'Enter Console Passkey'}
             </h1>
-            <p className="text-[12px] text-[#9a9a9a] leading-relaxed max-w-xs mx-auto">
+            <p className="mx-auto max-w-xs text-[12.5px] leading-relaxed text-black/60">
               {step === 'mfa'
                 ? 'Enter the 6-digit TOTP code from your authenticator application.'
-                : 'Enter your terminal security key or admin password to unlock console operations.'}
+                : 'Enter your atelier security passkey or account password to unlock operations.'}
             </p>
           </div>
 
           {/* Confirmed authenticated administrator panel */}
-          <div className="p-3.5 mb-5 border border-[#2c2c2c] bg-[#0a0a0a] flex items-center justify-between text-small">
-            <div className="flex items-center gap-3 min-w-0">
-              <ShieldCheck className="w-4 h-4 text-[#2fd35f] shrink-0" strokeWidth={1.5} />
+          <div className="mb-5 flex items-center justify-between border border-black/12 bg-[#fafafa] p-3.5 text-small">
+            <div className="flex min-w-0 items-center gap-3">
+              <ShieldCheck className="h-4 w-4 shrink-0 text-[#15803d]" strokeWidth={1.5} />
               <div className="truncate">
-                <span className="micro-sm text-[#9a9a9a] block">
-                  LOGGED IN AS OPERATOR
+                <span className="micro-sm block text-black/45">
+                  Operator Session
                 </span>
-                <span className="text-[#ececec] text-[12px] truncate block mt-0.5">
+                <span className="mt-0.5 block truncate font-mono text-[12px] text-black">
                   {activeEmail}
                 </span>
               </div>
             </div>
-            <span className="micro-sm bg-[#2fd35f] text-[#000000] px-2 py-0.5 font-semibold shrink-0">
-              VERIFIED
+            <span className="micro-sm shrink-0 bg-black px-2 py-0.5 text-white">
+              Verified
             </span>
           </div>
 
@@ -253,7 +253,7 @@ export const AdminSecurityGate: React.FC<AdminSecurityGateProps> = ({
             <div className="p-4 border border-dashed border-paper-a18 text-[13px] space-y-3 mb-4">
               <div className="flex items-center gap-2 micro-sm text-paper">
                 <AlertTriangle className="w-4 h-4 shrink-0" strokeWidth={1.4} />
-                <span>Terminal quarantined</span>
+                <span>Console quarantined</span>
               </div>
               <p className="text-paper-a72 font-light">
                 Excessive unauthorized attempts detected. Access suspended.
@@ -319,7 +319,7 @@ export const AdminSecurityGate: React.FC<AdminSecurityGateProps> = ({
                 <div className="flex items-center justify-between mb-2">
                   <label className="field-label flex items-center gap-1.5 !mb-0">
                     <Key className="w-3.5 h-3.5" strokeWidth={1.4} />
-                    <span>Admin terminal key / passkey</span>
+                    <span>Atelier console passkey</span>
                   </label>
                   <button
                     type="button"
@@ -339,7 +339,7 @@ export const AdminSecurityGate: React.FC<AdminSecurityGateProps> = ({
                     autoComplete="current-password"
                     value={terminalKeyInput}
                     onChange={(e) => setTerminalKeyInput(e.target.value)}
-                    placeholder="Enter terminal key or password..."
+                    placeholder="Enter console key or password..."
                     disabled={isVerifying}
                     className="field pr-10"
                   />
@@ -394,7 +394,7 @@ export const AdminSecurityGate: React.FC<AdminSecurityGateProps> = ({
                 className="btn btn-primary w-full !min-h-[48px] disabled:opacity-40"
               >
                 <Lock className="w-3.5 h-3.5" strokeWidth={1.4} />
-                <span>{isVerifying ? 'Verifying Key...' : 'Unlock Management Terminal'}</span>
+                <span>{isVerifying ? 'Verifying Key...' : 'Unlock Atelier Console'}</span>
               </button>
 
               <div className="pt-2 text-center">
@@ -413,7 +413,7 @@ export const AdminSecurityGate: React.FC<AdminSecurityGateProps> = ({
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5" strokeWidth={1.4} />
-            <span>Executive terminal security perimeter</span>
+            <span>Atelier security perimeter</span>
           </span>
           <span>·</span>
           <span>Zejesh Atelier</span>

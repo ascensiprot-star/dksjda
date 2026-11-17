@@ -456,19 +456,11 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
         className="pointer-events-none absolute inset-0 -z-10 opacity-70"
         style={{
           backgroundImage:
-            'radial-gradient(circle at 1px 1px, rgba(36,85,195,0.13) 0.55px, transparent 0.7px)',
+            'radial-gradient(circle at 1px 1px, rgba(0,0,0,0.055) 0.6px, transparent 0.8px)',
           backgroundSize: '22px 22px',
           maskImage: 'linear-gradient(to bottom, transparent, black 10%, black 82%, transparent)',
           WebkitMaskImage:
             'linear-gradient(to bottom, transparent, black 10%, black 82%, transparent)',
-        }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-[34%] -z-10 h-[820px] w-[980px] -translate-x-1/2 -translate-y-1/2"
-        style={{
-          background:
-            'radial-gradient(ellipse at center, rgba(36,85,195,0.075), rgba(15,123,92,0.025) 42%, transparent 72%)',
         }}
       />
 

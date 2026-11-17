@@ -20,6 +20,7 @@ import { StoryPage } from './components/StoryPage';
 import { CommunityVotePage } from './components/CommunityVotePage';
 import { LookbookView } from './components/LookbookView';
 import { AuthProvider, useAuth, DESIGNATED_ADMIN_EMAIL } from './supabase/AuthContext';
+import { isSupabaseConfigured } from './supabase/config';
 import { StorefrontDataProvider, useStorefrontData } from './context/StorefrontDataContext';
 import { AdminLayout } from './admin/AdminLayout';
 import { AdminRestrictedGate } from './admin/security/AdminRestrictedGate';
@@ -205,15 +206,6 @@ function StorefrontApp() {
       setRoute(parseCurrentUrlToRoute());
     };
 
-    const checkDirectAdminAttempt = () => {
-      const p = window.location.pathname;
-      const h = window.location.hash;
-      if (p === '/admin' || p === '/admin/' || h === '#admin') {
-        window.history.replaceState(null, '', '/');
-      }
-    };
-    checkDirectAdminAttempt();
-
     window.addEventListener('popstate', handlePopState);
     window.addEventListener('hashchange', handleHashChange);
     return () => {
@@ -347,23 +339,23 @@ function StorefrontApp() {
       ? products.find((p) => p.id === route.productId) || products[0] || null
       : null;
 
-  // Enforce Administrator Access: link only opens if signed in with huxaifa0fficial@gmail.com
+  // Enforce Administrator Access when Supabase is configured; allow local workspace preview when unconfigured
   if (route.type === 'admin') {
-    if (authLoading) {
+    if (isSupabaseConfigured && authLoading) {
       return (
         <div className="admin-scope admin-auth-page">
           <div className="admin-auth-bar">
-            <span className="label">ZEJESH // TERMINAL GATE</span>
+            <span className="label">ZEJESH · Atelier Console</span>
             <span className="label">SEC-00</span>
           </div>
           <div className="admin-auth-main">
-            <span className="label text-[#ffa21f]">VERIFYING OPERATOR SESSION…</span>
+            <span className="label text-black/65">Verifying operator session…</span>
           </div>
         </div>
       );
     }
 
-    if (!user) {
+    if (isSupabaseConfigured && !user) {
       return (
         <ErrorBoundary componentName="AdminAuthView">
           <AuthPage
@@ -378,7 +370,7 @@ function StorefrontApp() {
       );
     }
 
-    if (!isDesignatedAdminLoggedIn) {
+    if (isSupabaseConfigured && !isDesignatedAdminLoggedIn) {
       return (
         <AdminRestrictedGate
           onGoToAuth={() => navigateTo({ type: 'admin' })}
@@ -394,6 +386,7 @@ function StorefrontApp() {
 
     return (
       <AdminLayout
+        previewMode={!isSupabaseConfigured}
         onBackToStorefront={() => {
           window.history.pushState(null, '', '/');
           navigateTo({ type: 'home' });
@@ -629,6 +622,7 @@ function StorefrontApp() {
           onSetLanguage={(lang) => setLanguage(lang)}
           onSelectCategory={handleSelectCategory}
           onNavigatePage={(r) => navigateTo(r)}
+          onNavigateAdmin={!isSupabaseConfigured ? () => navigateTo({ type: 'admin' }) : undefined}
           dark={route.type === 'home'}
         />
       </ErrorBoundary>
@@ -732,6 +726,17 @@ function StorefrontApp() {
       </ErrorBoundary>
 
       <CookieBanner language={language} />
+
+      {!isSupabaseConfigured && (
+        <button
+          type="button"
+          onClick={() => navigateTo({ type: 'admin' })}
+          className="fixed bottom-5 right-5 z-40 inline-flex h-9 items-center gap-2 border border-black bg-black px-3.5 font-mono text-[10px] uppercase tracking-[0.16em] text-white transition-colors hover:bg-neutral-800 whitespace-nowrap"
+        >
+          <span>Admin Console</span>
+          <span aria-hidden="true">→</span>
+        </button>
+      )}
     </div>
   );
 }

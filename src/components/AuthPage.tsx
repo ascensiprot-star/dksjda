@@ -357,7 +357,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         </button>
 
         <span className="label text-ink-a45">
-          {adminIntent ? 'ZEJESH // ADMINISTRATOR ACCESS · SEC-01' : 'Patron Access'}
+          {adminIntent ? 'ZEJESH · Administrator Access' : 'Patron Access'}
         </span>
       </header>
 
@@ -378,7 +378,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
           <div className="relative z-10 flex flex-1 flex-col justify-between gap-24">
             <div className="max-w-md space-y-6 pt-10">
               <span className="label text-white/55">
-                {adminIntent ? 'Zejesh — Management Terminal' : 'Zejesh — Private Client Portal'}
+                {adminIntent ? 'Zejesh — Atelier Operations' : 'Zejesh — Private Client Portal'}
               </span>
               <p className="font-display font-light text-[clamp(44px,4.6vw,78px)] leading-[0.92] tracking-tight">
                 {adminIntent ? (

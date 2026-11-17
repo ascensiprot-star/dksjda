@@ -23,44 +23,44 @@ export const AdminRestrictedGate: React.FC<AdminRestrictedGateProps> = ({
   };
 
   return (
-    <div className="admin-scope min-h-screen bg-ink text-paper flex flex-col justify-between p-6 sm:p-12 selection:bg-[#ffa21f] selection:text-ink animate-fadeIn">
+    <div className="admin-scope min-h-screen bg-white text-black flex flex-col justify-between p-6 sm:p-12 selection:bg-black selection:text-white animate-fadeIn">
       {/* Top Header */}
-      <div className="flex items-center justify-between pb-3 border-b-2 border-[#9c1a1f] max-w-4xl w-full mx-auto">
+      <div className="flex items-center justify-between pb-3 border-b border-black/15 max-w-4xl w-full mx-auto">
         <div className="flex items-center gap-3">
-          <span className="w-2 h-2 bg-[#ff4b43]" />
-          <span className="micro-sm text-[#ffa21f]">
-            ZEJESH // SECURITY PERIMETER · ACCESS CONTROL
+          <span className="w-2 h-2 bg-[#b91c1c]" />
+          <span className="micro-sm text-black/70">
+            ZEJESH · Access Control Perimeter
           </span>
         </div>
         <button
           type="button"
           onClick={onBackToStorefront}
-          className="micro-sm text-paper-a45 hover:text-[#ffa21f] flex items-center gap-1.5 transition-colors cursor-pointer py-1 px-2 border border-[#2c2c2c]"
+          className="micro-sm text-black/65 hover:text-black flex items-center gap-1.5 transition-colors cursor-pointer py-1.5 px-3 border border-black/15 hover:border-black"
         >
           <ArrowLeft className="w-3.5 h-3.5" strokeWidth={1.5} />
-          <span>RETURN TO STOREFRONT</span>
+          <span>Return to Storefront</span>
         </button>
       </div>
 
       {/* Main Card */}
       <div className="max-w-md w-full mx-auto my-auto py-10">
-        <div className="border border-[#333333] border-t-2 border-t-[#ff4b43] bg-[#050505] p-8 sm:p-10 relative text-center">
+        <div className="border border-black/15 border-t-2 border-t-[#b91c1c] bg-white p-8 sm:p-10 relative text-center">
           {/* Top lock icon */}
-          <div className="w-12 h-12 border border-[#ff4b43]/60 bg-[#1c0708] text-[#ff4b43] mx-auto flex items-center justify-center mb-5">
+          <div className="w-12 h-12 border border-[#b91c1c]/35 bg-[#fafafa] text-[#b91c1c] mx-auto flex items-center justify-center mb-5">
             <Lock className="w-5 h-5" strokeWidth={1.5} />
           </div>
 
-          <span className="micro-sm text-[#ff4b43] block mb-2">
-            RESTRICTED TERMINAL LINK
+          <span className="micro-sm text-[#b91c1c] block mb-2">
+            Restricted Console Link
           </span>
 
-          <h1 className="font-display text-[24px] font-semibold leading-[1.15] text-[#ffa21f] mb-3">
-            ADMINISTRATIVE ACCESS DENIED
+          <h1 className="font-display text-[28px] font-light leading-[1.1] text-black mb-3">
+            Administrative Access Required
           </h1>
 
-          <p className="text-[12px] text-[#9a9a9a] leading-relaxed mb-7">
-            This management terminal link cannot be opened without an active executive administrator session.
-            Only the designated administrator (<span className="text-[#42c6ff] select-all font-mono text-[11px]">{DESIGNATED_ADMIN_EMAIL}</span>) is permitted to access this panel.
+          <p className="text-[12.5px] text-black/60 leading-relaxed mb-7">
+            This management link requires an active designated administrator session.
+            Only <span className="text-black select-all font-mono text-[11.5px]">{DESIGNATED_ADMIN_EMAIL}</span> is permitted to access this console.
           </p>
 
           {user ? (

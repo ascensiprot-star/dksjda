@@ -265,7 +265,7 @@ export const AdminAtlasView: React.FC<AdminAtlasViewProps> = ({
         className="pointer-events-none absolute inset-0 -z-10 opacity-70"
         style={{
           backgroundImage:
-            'radial-gradient(circle at 1px 1px, rgba(255,162,31,0.16) 0.55px, transparent 0.7px)',
+            'radial-gradient(circle at 1px 1px, rgba(0,0,0,0.06) 0.6px, transparent 0.8px)',
           backgroundSize: '20px 20px',
           maskImage: 'linear-gradient(to bottom, transparent, black 10%, black 88%, transparent)',
           WebkitMaskImage:
@@ -389,7 +389,7 @@ export const AdminAtlasView: React.FC<AdminAtlasViewProps> = ({
           {filteredRows.map((row) => (
             <div
               key={row.id}
-              className="group grid grid-cols-[92px_1fr_auto] items-baseline gap-4 border-b border-paper-a18/60 py-3 px-2 transition-colors hover:bg-[#10223f]/65 sm:grid-cols-[130px_1.4fr_.8fr_.7fr_auto]"
+              className="group grid grid-cols-[92px_1fr_auto] items-baseline gap-4 border-b border-paper-a18/60 py-3 px-2 transition-colors hover:bg-black/[0.03] sm:grid-cols-[130px_1.4fr_.8fr_.7fr_auto]"
             >
               <span className="truncate font-mono text-[8px] tracking-[0.06em] text-paper/50">
                 {row.code}

@@ -6,6 +6,7 @@ interface FooterProps {
   onSetLanguage: (lang: Language) => void;
   onSelectCategory: (cat: string, sub?: string) => void;
   onNavigatePage: (route: any) => void;
+  onNavigateAdmin?: () => void;
   settings?: StoreSettings;
   dark?: boolean;
 }
@@ -49,7 +50,7 @@ const columns = [
   },
 ];
 
-export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onNavigatePage, dark = false }) => {
+export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onNavigatePage, onNavigateAdmin, dark = false }) => {
   const year = new Date().getFullYear();
   const stroke = dark ? '1px rgba(255,255,255,0.55)' : '1px rgba(0,0,0,0.55)';
 
@@ -96,6 +97,17 @@ export const Footer: React.FC<FooterProps> = ({ onSelectCategory, onNavigatePage
                       </button>
                     </li>
                   ))}
+                  {col.title === 'Care' && onNavigateAdmin && (
+                    <li>
+                      <button
+                        type="button"
+                        onClick={onNavigateAdmin}
+                        className="group relative inline-flex min-h-[26px] items-center text-[13px] font-light text-ink-a72 transition-colors duration-300 hover:text-ink"
+                      >
+                        Admin Console
+                      </button>
+                    </li>
+                  )}
                 </ul>
               </div>
             ))}
