@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NULLA Terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--a:#ffa21f;--a2:#e88a00;--w:#ececec;--g:#9a9a9a;--g2:#666;--l:#2a2a2a;--l2:#3b3b3b;--up:#2fd35f;--dn:#ff4b43;--cy:#42c6ff;--yl:#ffd60a;--bl:#1a6be0;--rd:#b3191f;--nb:#0a2282;--rh:21px}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#000;color:var(--w);overflow:hidden}
+body{font:12.5px/1.25 'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
+body.cp{--rh:18px;font-size:11.5px}
+button,input,select{font:inherit;color:inherit;background:none;border:0;outline:0}
+button{cursor:pointer}
+:focus-visible{outline:1px solid var(--a)}
+svg{display:block}
+svg text{font:10.5px 'IBM Plex Mono',monospace;fill:#8f8f8f}
+#t{display:grid;grid-template-rows:auto auto auto auto minmax(0,1fr) auto;height:100vh}
+.dim{color:var(--g)}.up{color:var(--up)}.dn{color:var(--dn)}.am{color:var(--a)}.cy{color:var(--cy)}.yl{color:var(--yl)}.wh{color:#fff}
+
+/* command bar */
+#bar1{display:flex;align-items:center;gap:8px;padding:5px 8px;background:#000;position:relative;z-index:30}
+#bar1 .nv{font-size:20px;line-height:1;padding:0 8px;color:#d8d8d8}
+#bar1 .nv:hover{color:var(--a)}
+.fld{display:flex;align-items:center;gap:10px;background:#262626;border:1px solid #4a4a4a;border-bottom-color:#8a8a8a;padding:3px 12px;font-size:15px;height:30px}
+.fld input{width:68px;font-size:15px;text-transform:uppercase}
+.fld.sec{min-width:230px;justify-content:space-between}
+.fld.fn{width:92px}
+.fld.rel{flex:0 0 auto}
+.fld b{font-weight:400;color:#cfcfcf;font-size:11px}
+.sp{flex:1}
+.hb{display:flex;align-items:center;gap:6px;color:#d8d8d8;padding:0 8px;height:30px}
+.hb:hover{color:var(--a)}
+.hb svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6}
+.qb{background:var(--yl);color:#000;font-weight:600;width:44px;height:30px;font-size:16px;display:grid;place-items:center}
+
+/* tickers */
+#tick1{display:flex;align-items:baseline;gap:14px;padding:2px 8px 0 4px;font-size:26px;line-height:1.15;white-space:nowrap;overflow:hidden}
+#tick1 .cur{width:20px;height:30px;background:#6bb7ff;align-self:center;flex:none}
+#tick1 .tk{font-weight:500;letter-spacing:.02em}
+#tick1 .ba,#tick1 .qs{font-size:24px;color:#e6e6e6}
+#tick1 svg{align-self:center}
+#tick2{display:flex;align-items:center;gap:22px;padding:0 8px 4px 8px;font-size:21px;white-space:nowrap;overflow:hidden}
+#tick2 .gl{width:34px;height:34px;border-radius:50%;background:var(--a);color:#000;display:grid;place-items:center;font-size:15px;flex:none}
+#tick2 b{font-weight:400;color:var(--a)}
+#tick2 .l{color:var(--a)}
+
+/* red bar */
+#bar2{display:flex;align-items:stretch;height:28px;font-size:16px}
+#bar2 .id{background:var(--a);color:#000;padding:0 14px;display:flex;align-items:center;min-width:410px}
+#bar2 button{background:#9c1a1f;padding:0 16px;color:#fff;border-left:1px solid #000;white-space:nowrap}
+#bar2 button:hover{background:#c0252c}
+#bar2 button i{font-style:normal;font-size:10px;margin-left:6px}
+#bar2 .ttl{flex:1;background:#b3191f;text-align:right;padding:0 16px;display:flex;align-items:center;justify-content:flex-end;color:#fff}
+
+/* main */
+#main{min-height:0;display:flex;flex-direction:column;background:#000;position:relative}
+.sr{display:flex;align-items:center;gap:16px;padding:3px 8px;font-size:15px;white-space:nowrap;overflow:hidden;flex:none;min-height:30px}
+.sr .adj{background:#303030;border:1px solid #555;color:#fff;font-weight:600;padding:0 12px;font-size:14px}
+.sr .qm{background:#fff;color:#000;font-style:normal;font-weight:700;padding:0 6px;margin-left:6px}
+.ob{background:var(--a);color:#000;padding:0 10px;height:24px;appearance:none;cursor:pointer;border:1px solid #5a3a00;font-size:15px}
+.ob.w{min-width:300px}
+.ob option{background:#222;color:#fff}
+.tabs{display:flex;flex:none;background:#0d0d0d;padding:2px 4px 0}
+.tabs button{padding:3px 22px 3px 14px;margin-right:2px;color:#b0b0b0;background:#2b2b2b;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 100%,0 100%);font-size:14.5px;white-space:nowrap}
+.tabs button.on{background:#bdbdbd;color:#111}
+.tabs button:hover:not(.on){color:#fff}
+.sub{display:flex;background:#c2c2c2;flex:none;padding:0}
+.sub button{padding:3px 18px;color:#555;font-size:14.5px;white-space:nowrap}
+.sub button.on{background:var(--bl);color:#fff}
+.body{flex:1;min-height:0;position:relative;overflow:hidden}
+
+/* FA grid */
+.fa{position:absolute;inset:0;overflow:auto;background:#000}
+.fa table{border-collapse:separate;border-spacing:0;font-size:15px}
+.fa th{background:#2a2a2a;font-weight:400;position:sticky;top:0;z-index:3;white-space:nowrap;padding:2px 8px;height:var(--rh);border-right:1px solid #444;color:#e6e6e6}
+.fa tr.h2 th{top:var(--rh);background:#0d0d0d;border-bottom:1px solid #555;border-top:1px solid #555}
+.fa th.c1{left:0;z-index:5;text-align:left;border-right:0}
+.fa th.c2{left:30px;z-index:5;text-align:left;min-width:370px}
+.fa td{height:var(--rh);padding:0 6px;white-space:nowrap;text-align:right}
+.fa td.v{min-width:118px;border-left:1px solid #444;padding-right:2px}
+.fa td.pc{min-width:76px;padding-right:6px;color:#dcdcdc}
+.fa td.ic{position:sticky;left:0;background:#1c1c1c;z-index:2;width:30px;min-width:30px;text-align:center;padding:0}
+.fa td.lb{position:sticky;left:30px;background:#1c1c1c;z-index:2;text-align:left;min-width:370px;max-width:370px;overflow:hidden;text-overflow:ellipsis;border-right:1px solid #444;color:#e6e6e6}
+.fa tr.g td{color:var(--a)}
+.fa tr.g td.lb,.fa tr.g td.pc{color:var(--a)}
+.fa tr:hover td{background:#10223f}
+.fa tr:hover td.lb,.fa tr:hover td.ic{background:#14305e}
+.fa .tg{font-style:normal;cursor:pointer;display:inline-block;width:18px;color:#ddd;font-size:11px}
+.fa .ib{cursor:pointer;display:inline-block;vertical-align:middle}
+.fa .ib:hover rect{fill:#8fd0ff}
+.fanav{position:absolute;left:0;right:0;bottom:0;height:30px;background:#000;display:flex;gap:10px;padding:3px 8px;z-index:6}
+.fanav button{width:84px;background:#2a2a2a;border:1px solid #444;color:#ddd;font-size:15px}
+.fanav button:hover{background:#3a3a3a}
+.fa{bottom:30px}
+
+/* panels */
+.gr{display:grid;gap:3px;height:100%;padding:3px;background:#000}
+.pn{background:#050505;border:1px solid #333;display:flex;flex-direction:column;min-height:0;min-width:0}
+.pn>h4{display:flex;justify-content:space-between;gap:8px;background:#1b1b1b;color:var(--a);font-weight:500;padding:2px 8px;font-size:12px;border-bottom:1px solid #333;white-space:nowrap}
+.pn>h4 u{text-decoration:none;color:var(--g);font-weight:400}
+.pn>h4 span.r{display:flex;gap:10px}
+.pn>h4 button{color:#aaa;font-size:11px;padding:0 4px}
+.pn>h4 button.on{background:var(--bl);color:#fff}
+.pb{flex:1;min-height:0;position:relative;overflow:auto}
+.pb.fx{overflow:hidden}
+.ch{position:absolute;inset:0}
+.ch svg{position:absolute;inset:0}
+.hit .hl{opacity:0;pointer-events:none}.hit:hover .hl{opacity:1}
+table.dt{width:100%;border-collapse:collapse;font-size:12px}
+.dt th{position:sticky;top:0;background:#171717;color:#b9b9b9;font-weight:400;text-align:left;padding:2px 8px;white-space:nowrap;border-bottom:1px solid #333;cursor:pointer;z-index:2}
+.dt th:hover{color:var(--a)}
+.dt td{padding:0 8px;height:var(--rh);border-bottom:1px solid #141414;white-space:nowrap}
+.dt .r{text-align:right}.dt .c{text-align:center}
+.dt tr:hover td{background:#10223f}
+.dt tr.sel td{background:#173a78}
+.mb{display:inline-block;width:46px;height:6px;background:#222;vertical-align:middle;margin-right:6px}
+.mb i{display:block;height:100%;background:var(--a)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:0 14px;padding:4px 8px;font-size:12px}
+.kv>*{height:var(--rh);display:flex;align-items:center;border-bottom:1px solid #131313}
+.kv>:nth-child(odd){color:var(--g)}
+.kv>:nth-child(even){justify-content:flex-end;text-align:right}
+.hm{display:grid;gap:2px;padding:6px;font-size:11px}
+.hm b{font-weight:400;color:var(--g);text-align:center}
+.hm span{height:20px;display:grid;place-items:center;color:#fff}
+.lst{list-style:none}
+.lst li{display:flex;gap:10px;padding:3px 8px;border-bottom:1px solid #141414;font-size:12px}
+.lst li:hover{background:#10223f}
+.lst time{color:var(--g);margin-left:auto;white-space:nowrap}
+.big{font-size:44px;color:var(--a);padding:10px 12px 0;line-height:1}
+.desc{padding:8px 10px;font-size:12.5px;line-height:1.45;color:#e2e2e2}
+.desc h2{font-size:15px;color:var(--a);font-weight:500;margin-bottom:4px}
+.desc small{color:var(--g)}
+.pg{display:grid;gap:0}
+
+/* news */
+#news{background:var(--nb);font-size:16px;line-height:1.3;height:auto;overflow:hidden;position:relative;z-index:20}
+#news .hd{text-align:right;color:#a7b2d6;padding:2px 14px;font-size:15px;background:#071a66}
+#news .hd button{color:#bfc8e6;margin-left:18px}
+#news .hd button:hover{color:#fff}
+#nl div{display:flex;gap:18px;padding:0 10px;white-space:nowrap;overflow:hidden}
+#nl .s{color:#c9a85a;width:46px;flex:none;text-align:right}
+#nl .m{color:#c8d1f0;flex:none}
+#nl .x{color:#f0e2b0;overflow:hidden;text-overflow:ellipsis}
+#nl div:first-child .x{color:#fff}
+#news.big #nl{max-height:46vh;overflow:auto}
+
+/* overlays */
+#mn{position:fixed;z-index:90;background:#191919;border:1px solid #666;min-width:220px;display:none;max-height:70vh;overflow:auto}
+#mn.on{display:block}
+#mn button{display:block;width:100%;text-align:left;padding:4px 12px;font-size:13px;white-space:nowrap}
+#mn button:hover{background:var(--bl)}
+#ovl{position:fixed;z-index:95;right:14px;top:96px;width:min(560px,94vw);max-height:78vh;overflow:auto;background:#0b0b0b;border:1px solid var(--a);display:none}
+#ovl.on{display:block}
+#ovl h3{display:flex;justify-content:space-between;background:#1f1f1f;color:var(--a);font-weight:500;padding:4px 10px}
+#ovl h3 button{color:#fff}
+#ovl .in{padding:8px 12px;font-size:13px}
+#ovl .rw{display:flex;justify-content:space-between;gap:16px;padding:5px 0;border-bottom:1px solid #1a1a1a}
+#ovl select{background:#222;border:1px solid #555;padding:1px 6px}
+#pop{position:fixed;z-index:92;left:50%;top:18vh;transform:translateX(-50%);width:min(720px,94vw);height:330px;background:#070707;border:1px solid var(--a);display:none;flex-direction:column}
+#pop.on{display:flex}
+#pop h3{display:flex;justify-content:space-between;background:#1f1f1f;color:var(--a);font-weight:500;padding:4px 10px}
+#pop h3 button{color:#fff}
+#pop .pb{padding:0}
+#tip{position:fixed;z-index:120;pointer-events:none;background:#000;border:1px solid var(--a);color:#fff;padding:4px 8px;font-size:11.5px;opacity:0;max-width:300px}
+#tip b{font-weight:500;color:var(--a)}
+#tip i{display:inline-block;width:8px;height:8px;margin-right:6px}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#000;border:1px solid var(--a);color:var(--a);padding:6px 16px;z-index:130;display:none}
+#toast.on{display:block}
+.flash{animation:fl .6s}
+@keyframes fl{from{background:#3b2a00}to{background:transparent}}
+@media (max-width:1100px){#tick1{font-size:18px}#tick1 .ba,#tick1 .qs{font-size:16px}#tick2{font-size:14px;gap:12px}#bar2 .id{min-width:0}.fld.sec{min-width:150px}.hide-s{display:none!important}.sr{font-size:12px;gap:8px}.tabs button,.sub button{font-size:12px;padding:3px 10px}#news{font-size:12px}}
+</style>
+</head>
+<body>
+<div id="t">
+  <div id="bar1"></div>
+  <div id="tick1"></div>
+  <div id="tick2"></div>
+  <div id="bar2"></div>
+  <div id="main"></div>
+  <div id="news"></div>
+</div>
+<div id="mn"></div>
+<div id="ovl"></div>
+<div id="pop"></div>
+<div id="tip"></div>
+<div id="toast"></div>
+
+<script>
+/* ========== utils ========== */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const R=rng(77),ri=(a,b)=>Math.floor(a+R()*(b-a+1)),pick=a=>a[Math.floor(R()*a.length)];
+const hh=(i,j)=>{const x=Math.sin(i*12.9898+j*78.233)*43758.5453;return x-Math.floor(x)};
+const sum=(a,f=x=>x)=>a.reduce((s,x)=>s+f(x),0);
+const N=(v,d=1)=>v==null||!isFinite(v)?'—':(v<0&&Math.abs(v)>=Math.pow(10,-d)/2?'-':'')+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const nf=v=>{const a=Math.abs(v);return a>=1e9?N(v/1e9,1)+'B':a>=1e6?N(v/1e6,1)+'M':a>=1e4?N(v/1e3,0)+'K':a>=100?N(v,0):N(v,a<10?2:1)};
+const pad=n=>String(n).padStart(2,'0');
+const hms=d=>pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+const hm=d=>pad(d.getHours())+':'+pad(d.getMinutes());
+const sgn=(v,d=1,s='')=>`<b class="${v>=0?'up':'dn'}" style="font-weight:400">${v>=0?'+':''}${N(v,d)}${s}</b>`;
+const cc=(v,good=1)=>(v>=0)===(good>0)?'up':'dn';
+
+const CUR={USD:1,EUR:.92,GBP:.79};
+const ENT={'NULLA CO/THE Equity':{f:1,id:'NL OPS Equity'},'NULLA NA Region':{f:.38,id:'NL NA Region'},'NULLA EU Region':{f:.34,id:'NL EU Region'},'NULLA APAC Region':{f:.19,id:'NL APAC Region'},'NULLA ME Region':{f:.09,id:'NL ME Region'}};
+const st={fn:'FA',tab:6,sub:11,kind:'Annuals',n:10,cur:'USD',ent:'NULLA CO/THE Equity',col:{},hist:['FA'],hi:0,pct:true,cp:false,cust:['rev','gp','ebitda','ni','orders','ret'],des:1,star:false};
+const mv=v=>v*CUR[st.cur]*ENT[st.ent].f,sc=()=>ENT[st.ent].f;
+const CAT=['Outerwear','Knitwear','Tailoring','Shirting','Leather Goods'];
+const REGN=['North America','Europe','Asia-Pacific','Middle East','Other'];
+const CHN=['Web','Mobile App','Retail Stores','Marketplaces','Wholesale'];
+
+/* ========== charts ========== */
+const COL=['#ffa21f','#42c6ff','#ececec','#2fd35f','#ff4b43','#ffd60a'];
+const CH=[];const ch=fn=>{CH.push(fn);return`<div class="ch" data-c="${CH.length-1}"></div>`};
+function paint(root=document){$$('.ch',root).forEach(e=>{const f=CH[e.dataset.c];if(f&&e.clientWidth>30&&e.clientHeight>30)e.innerHTML=f(e.clientWidth,e.clientHeight)})}
+function nice(mn,mx,c=4){const raw=(mx-mn)/c||1,p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p,s=(f<=1?1:f<=2?2:f<=5?5:10)*p;const lo=Math.floor(mn/s)*s,hi=Math.ceil(mx/s)*s,t=[];for(let v=lo;v<=hi+1e-9;v+=s)t.push(v);return{lo,hi,t}}
+const tr=(c,n,v)=>`<div><i style="background:${c}"></i>${n}: <b>${v}</b></div>`;
+function frame(w,h,o,n,x,lo,hi,t,pl,pr,pt,pb){
+  const y=v=>pt+(h-pt-pb)-(v-lo)/(hi-lo)*(h-pt-pb);let s='';
+  t.forEach(v=>s+=`<line x1="${pl}" x2="${w-pr}" y1="${y(v)}" y2="${y(v)}" stroke="#222"/><text x="${pl-5}" y="${y(v)+3}" text-anchor="end">${(o.yf||nf)(v)}</text>`);
+  const ev=Math.max(1,Math.ceil(n/Math.max(2,Math.floor((w-pl-pr)/56))));
+  for(let i=0;i<n;i+=ev)s+=`<text x="${x(i)}" y="${h-5}" text-anchor="middle">${o.labels[i]}</text>`;
+  return{s,y};
+}
+function line(w,h,o){
+  const pl=o.pl||42,pr=8,pt=6,pb=17,iw=w-pl-pr,n=o.labels.length,all=o.series.flatMap(s=>s.data);
+  const{lo,hi,t}=nice(o.zero===false?Math.min(...all)*.97:0,Math.max(...all)*1.03),x=i=>pl+(n>1?i*iw/(n-1):iw/2);
+  const f=frame(w,h,o,n,x,lo,hi,t,pl,pr,pt,pb),y=f.y;let s=`<svg width="${w}" height="${h}">`+f.s;
+  o.series.forEach((se,k)=>{const c=se.c||COL[k%6],d=se.data.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join('');
+    if(se.area)s+=`<path d="${d}L${x(n-1)} ${y(lo)}L${x(0)} ${y(lo)}Z" fill="${c}" opacity=".13"/>`;
+    s+=`<path d="${d}" fill="none" stroke="${c}" stroke-width="${se.w||1.4}" ${se.dash?'stroke-dasharray="3 3"':''}/>`});
+  for(let i=0;i<n;i++){const tip=`<b>${o.labels[i]}</b>`+o.series.map((se,k)=>tr(se.c||COL[k%6],se.name,(o.fmt||nf)(se.data[i]))).join('');
+    s+=`<g class="hit"><rect x="${x(i)-iw/n/2}" y="${pt}" width="${iw/n}" height="${h-pt-pb}" fill="transparent" data-tip="${esc(tip)}"/><line class="hl" x1="${x(i)}" x2="${x(i)}" y1="${pt}" y2="${h-pb}" stroke="#ffa21f" stroke-dasharray="2 2"/></g>`}
+  return s+'</svg>';
+}
+function bars(w,h,o){
+  const pl=o.pl||42,pr=6,pt=6,pb=17,iw=w-pl-pr,n=o.labels.length,m=o.series.length,stk=o.stacked;
+  const tot=o.labels.map((_,i)=>stk?sum(o.series,s=>Math.max(0,s.data[i])):Math.max(...o.series.map(s=>s.data[i])));
+  const mn=Math.min(0,...o.series.flatMap(s=>s.data)),{lo,hi,t}=nice(mn,Math.max(...tot)*1.04),band=iw/n,xc=i=>pl+band*i+band/2,bw=stk?Math.min(band*.7,40):Math.min(band*.78/m,24);
+  const f=frame(w,h,o,n,xc,lo,hi,t,pl,pr,pt,pb),y=f.y;let s=`<svg width="${w}" height="${h}">`+f.s;
+  for(let i=0;i<n;i++){let acc=0;const tip=`<b>${o.labels[i]}</b>`+o.series.map((se,k)=>tr(se.c||COL[k%6],se.name,(o.fmt||nf)(se.data[i]))).join('');
+    s+=`<g class="hit"><rect class="hl" x="${pl+band*i}" y="${pt}" width="${band}" height="${h-pt-pb}" fill="#fff" opacity=".07"/>`;
+    o.series.forEach((se,k)=>{const v=se.data[i],c=se.c||COL[k%6];
+      if(stk){s+=`<rect x="${xc(i)-bw/2}" y="${y(acc+v)}" width="${bw}" height="${Math.max(0,y(acc)-y(acc+v)-1)}" fill="${c}"/>`;acc+=v}
+      else s+=`<rect x="${xc(i)-bw*m/2+k*bw}" y="${v>=0?y(v):y(0)}" width="${bw-1}" height="${Math.max(1,Math.abs(y(v)-y(0)))}" fill="${c}"/>`});
+    s+=`<rect x="${pl+band*i}" y="${pt}" width="${band}" height="${h-pt-pb}" fill="transparent" data-tip="${esc(tip)}"/></g>`}
+  if(o.line)s+=`<path d="${o.line.data.map((v,i)=>(i?'L':'M')+xc(i)+' '+y(v)).join('')}" fill="none" stroke="#ececec" stroke-width="1.4"/>`;
+  return s+'</svg>';
+}
+function spark(w,h,d,c='#ececec'){const mn=Math.min(...d),mx=Math.max(...d),x=i=>1+i*(w-2)/(d.length-1),y=v=>h-2-(v-mn)/((mx-mn)||1)*(h-4);return`<svg width="${w}" height="${h}"><path d="${d.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join('')}" fill="none" stroke="${c}" stroke-width="1.2"/></svg>`}
+function gauge(w,h,v,max,txt,sub){const r=Math.min(w/2-8,h-30),cx=w/2,cy=h-22,P=a=>[cx+r*Math.cos(a),cy+r*Math.sin(a)],f=Math.PI+Math.PI*Math.min(1,v/max);
+  const[x0,y0]=P(Math.PI),[x1,y1]=P(f),[x2,y2]=P(2*Math.PI);let ticks='';for(let i=0;i<=10;i++){const a=Math.PI+Math.PI*i/10,[ax,ay]=P(a),k=r-(i%5?5:9);ticks+=`<line x1="${ax}" y1="${ay}" x2="${cx+k*Math.cos(a)}" y2="${cy+k*Math.sin(a)}" stroke="#666"/>`}
+  return`<svg width="${w}" height="${h}"><path d="M${x0} ${y0}A${r} ${r} 0 0 1 ${x2} ${y2}" fill="none" stroke="#222" stroke-width="11"/><path d="M${x0} ${y0}A${r} ${r} 0 0 1 ${x1} ${y1}" fill="none" stroke="#ffa21f" stroke-width="11"/>${ticks}<text x="${cx}" y="${cy-8}" text-anchor="middle" style="font-size:${Math.round(r*.4)}px;fill:#ffa21f">${txt}</text><text x="${cx}" y="${cy+10}" text-anchor="middle">${sub}</text></svg>`}
+function heat(rows,cols,M,o={}){const fl=M.flat().filter(v=>v!=null),mx=Math.max(...fl),mn=Math.min(...fl);
+  return`<div class="hm" style="grid-template-columns:${o.lw||'44px'} repeat(${cols.length},minmax(0,1fr))"><i></i>${cols.map(c=>`<b>${c}</b>`).join('')}${rows.map((r,i)=>`<b style="text-align:left">${r}</b>`+M[i].map((v,j)=>{if(v==null)return'<i></i>';const a=(v-mn)/(mx-mn||1);return`<span style="background:rgba(255,162,31,${(.08+a*.85).toFixed(2)});color:${a>.55?'#000':'#fff'}" data-tip="${esc(`<b>${r} · ${cols[j]}</b><br>${(o.fmt||nf)(v)}`)}">${o.show?(o.fmt||nf)(v):''}</span>`}).join('')).join('')}</div>`}
+const bar=(v,m=100)=>`<span class="mb"><i style="width:${Math.max(0,Math.min(100,v/m*100))}%"></i></span>`;
+const miniIcon=`<svg class="ib" width="18" height="14" viewBox="0 0 18 14"><rect x="1" y="1" width="2" height="12" fill="#3f9cff"/><rect x="5" y="5" width="2" height="8" fill="#3f9cff"/><rect x="9" y="3" width="2" height="10" fill="#3f9cff"/><rect x="13" y="7" width="2" height="6" fill="#3f9cff"/></svg>`;
+
+/* ========== tables ========== */
+let TBS={};
+function tb(id,cols,rows,o={}){TBS[id]={cols,rows,o,s:o.sort||null,d:o.dir||-1,sel:null};return`<div data-tb="${id}"></div>`}
+function drawTb(id){const t=TBS[id],w=$(`[data-tb="${id}"]`);if(!t||!w)return;
+  let rows=[...t.rows];if(t.s)rows.sort((a,b)=>{const x=a[t.s],y=b[t.s];return(x>y?1:x<y?-1:0)*t.d});
+  if(t.o.max)rows=rows.slice(0,t.o.max);
+  w.innerHTML=`<table class="dt"><thead><tr>${t.cols.map(c=>`<th class="${c.a||''}" ${c.ns?'':`data-ts="${id}|${c.k}"`}>${c.l}${t.s===c.k?(t.d>0?' ▲':' ▼'):''}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr data-tr="${id}|${t.rows.indexOf(r)}" class="${t.sel===r?'sel':''}">${t.cols.map(c=>`<td class="${c.a||''}">${c.f?c.f(r[c.k],r):r[c.k]}</td>`).join('')}</tr>`).join('')}</tbody></table>`}
+const pn=(t,code,body,sty='',o={})=>`<section class="pn" style="${sty}"><h4><span>${t}</span><u>${o.act||''}${code?code+' &gt;':''}</u></h4><div class="pb ${o.fx?'fx':''}">${body}</div></section>`;
+const kv=a=>`<div class="kv">${a.map(r=>`<div>${r[0]}</div><div>${r[1]}</div>`).join('')}</div>`;
+
+/* ========== data ========== */
+const NAMES=['Amara Okafor','Lukas Brandt','Mei Tanaka','Sofia Marchetti','Daniel Reyes','Ines Carvalho','Noor Al-Farsi','Henrik Lindqvist','Priya Raman','Theo Laurent','Yara Haddad','Oliver Grant','Aiko Nakamura','Mateo Silva','Freya Nilsen','Zaid Malik','Clara Voss','Ibrahim Sheikh','Elena Petrova','Jonas Weber','Hana Kim','Samuel Adeyemi','Laila Rahman','Victor Moreau','Isabel Duarte','Kenji Mori','Anya Volkov','Rafael Costa','Selin Aydin','Marcus Hale'];
+const CTRY=['US','UK','DE','FR','AE','JP','SG','CA','AU','SE','FI','NL','IT','PK'],PAY=['VISA','MC','APAY','PYPL','AMEX','BANK'],DCS=['Rotterdam','Louisville','Singapore','Karachi'],CARR=['DHL','UPS','FEDEX','R.MAIL','ARAMEX'];
+const SZ=['XS','S','M','L','XL'];
+const PR0=[['Cashmere Crewneck',1,420],['Wool Overcoat',0,890],['Poplin Shirt',3,210],['Pleated Trouser',2,340],['Merino Roll Neck',1,290],['Leather Derby',4,560],['Silk Slip Dress',2,480],['Selvedge Denim',2,260],['Trench Coat',0,720],['Linen Short',2,180],['Quilted Vest',0,380],['Oxford Shirt',3,195],['Wide Leg Chino',2,230],['Cotton Tee',3,85],['Bomber Jacket',0,540],['Wool Scarf',1,140],['Leather Belt',4,160],['Canvas Tote',4,190],['Knit Polo',1,240],['Tailored Blazer',2,640],['Cargo Pant',2,270],['Hooded Sweat',1,220],['Suede Loafer',4,430],['Pima Tank',3,70],['Down Parka',0,980],['Silk Scarf',4,150],['Chelsea Boot',4,610],['Rib Cardigan',1,330],['Pique Polo',3,125],['Camel Coat',0,1150]];
+const PR=PR0.map((p,i)=>{const price=p[2],cost=Math.round(price*(.25+R()*.14)),units=Math.round(1500/(price/100+1.6)*(.5+R())),stock=SZ.map(()=>R()<.1?0:ri(1,64)),tot=sum(stock);
+  return{i,sku:'NL-'+(1000+i*7),name:p[0],cat:CAT[p[1]],ci:p[1],price,cost,mg:+((1-cost/price)*100).toFixed(1),units,rev:units*price,stock,tot,cover:Math.round(tot/(units/30)),sell:ri(31,90),ret:+(5+R()*17).toFixed(1),wow:+((R()-.42)*36).toFixed(1),sp:Array.from({length:14},(_,k)=>Math.round(units/30*(.55+hh(i,k)*.9))),dc:DCS.map(()=>R())}});
+let ORDN=0;
+function mkOrder(a){const items=ri(1,5),st0=a<.5?pick(['Paid','Paid','Packing']):a<3?pick(['Packing','Shipped']):a<30?pick(['Shipped','Shipped','Delivered']):R()<.08?pick(['Returned','Refunded','Cancelled']):'Delivered';
+  return{id:'NL-'+(49100-ORDN++),ts:Date.now()-a*36e5,cust:pick(NAMES),cc:pick(CTRY),items,chan:pick(CHN),pay:pick(PAY),total:Math.round(items*(70+R()*260)),st:st0,dc:pick(DCS),car:pick(CARR),sla:+(R()*30).toFixed(1)}}
+const ORD=Array.from({length:180},(_,i)=>mkOrder(i*.5+R()*.4));
+const CUST=Array.from({length:60},(_,i)=>{const n=NAMES[i%30]+(i>=30?' Jr.':''),o=ri(1,38),ltv=Math.round(o*(120+R()*340));return{id:i,name:n,tier:ltv>6500?'ATELIER':ltv>2600?'LOYAL':o<3?'NEW':'MEMBER',cc:pick(CTRY),o,ltv,last:ri(1,260),risk:ri(3,96),aov:Math.round(ltv/o),ret:+(R()*28).toFixed(1)}}).sort((a,b)=>b.ltv-a.ltv);
+const STORES=[['New York · Mercer St','US',410,184e3,22.4,2.3],['London · Mayfair','UK',320,152e3,21.1,2.2],['Paris · Marais','FR',290,141e3,19.6,2.1],['Tokyo · Aoyama','JP',260,168e3,18.2,2.4],['Milan · Montenapoleone','IT',350,96e3,24.8,2.0],['Dubai · Emirates Mall','AE',500,210e3,16.3,2.5],['Berlin · Mitte','DE',240,88e3,17.4,1.9],['Singapore · Orchard','SG',280,134e3,18.9,2.2],['Stockholm · Östermalm','SE',180,64e3,20.8,2.0],['Los Angeles · Melrose','US',380,121e3,17.7,2.1],['Helsinki · Esplanadi','FI',160,52e3,21.9,1.9],['Karachi · Clifton','PK',220,74e3,14.6,2.6],['Seoul · Gangnam','KR',230,118e3,19.1,2.2],['Toronto · Yorkville','CA',210,70e3,18.5,2.0]].map((s,i)=>{const rev=Math.round(s[3]*s[4]/100*(150+R()*60)*(.9+R()*.2)),sp=Array.from({length:12},(_,k)=>Math.round(rev/12*(.8+hh(i,k)*.4)));return{i,name:s[0],cc:s[1],sqm:s[2],foot:s[3],conv:s[4],upt:s[5],rev,psm:Math.round(rev/s[2]),sp,yoy:+((R()-.3)*30).toFixed(1),stf:R()<.85?'OPEN':'REFIT'}});
+const FACT=[['Karachi Atelier','Knitwear, tailoring',96.4,.8,34,88],['Sialkot Works','Outerwear, leather',93.1,1.4,41,92],['Porto Knit','Fine-gauge knits',97.2,.6,28,71],['Bursa Tailoring','Trousers, blazers',91.8,1.9,38,84],['Prato Mill','Wool cloth',94.6,.9,52,79],['Lahore Denim','Denim, twill',92.3,1.2,36,90],['Tiruppur Cotton','Jersey, shirting',95.0,1.1,33,81],['Marrakech Leather','Belts, bags',90.4,2.1,44,76]].map((f,i)=>({i,name:f[0],make:f[1],ot:f[2],def:f[3],lead:f[4],cap:f[5],po:ri(2,9)}));
+const CAMP=[['Monolith FW26 launch','Meta',86e3,412e3,'LIVE'],['Always-on search','Google',64e3,388e3,'LIVE'],['Atelier lookbook','Pinterest',22e3,71e3,'LIVE'],['Black Friday early access','Email',6e3,196e3,'SCHED'],['Win-back flow','Email',3e3,118e3,'LIVE'],['Creator seeding','TikTok',41e3,92e3,'LIVE'],['Retail window spring','OOH',58e3,63e3,'ENDED'],['Referral offer','Referral',12e3,84e3,'LIVE'],['Brand search','Google',18e3,142e3,'LIVE'],['Resort preview','Meta',33e3,79e3,'LIVE'],['Cart recovery','SMS',4e3,88e3,'LIVE'],['Wholesale lookbook','Email',2e3,46e3,'ENDED']].map((c,i)=>({i,name:c[0],ch:c[1],spend:c[2],rev:c[3],roas:+(c[3]/c[2]).toFixed(1),cac:Math.round(32+hh(i,8)*60),ctr:+(.6+hh(i,3)*2.4).toFixed(2),cvr:+(1.2+hh(i,5)*3).toFixed(2),st:c[4]}));
+const TIX=Array.from({length:26},(_,i)=>({id:'T-'+(8841-i*3),sub:pick(['Loose button on coat','Where is my order','Exchange size M to L','Duties charged at delivery','Gift receipt request','Refund not received','Store pickup question','Alteration enquiry','Wrong colour received','Address change']),cust:pick(NAMES),pri:pick(['HIGH','NORM','NORM','LOW']),age:Math.round(2+i*1.6+R()*3),st:pick(['OPEN','OPEN','WAIT','SOLVED']),agent:pick(['M.R.','I.K.','S.L.','A.S.'])}));
+const NEWSP=[['NL','*WOOL OVERCOAT M/L SOLD OUT AT ROTTERDAM DC, 41 OPEN CARTS AFFECTED'],['BN','*MONOLITH FW26 DROP 2 SELL-THROUGH 38% IN 72 HOURS, PLAN 29%'],['NL','*KARACHI ATELIER KNITWEAR LOTS 2 DAYS BEHIND, 1,840 UNITS AFFECTED'],['DJ','*CARRIER DHL EXPRESS REPORTS CUSTOMS DELAYS AT DUBAI HUB'],['NL','*APPLE PAY FAILURES UP 1.4PP ON UK AND UAE ISSUERS'],['NS1','*COTTON FUTURES FALL 1.2%, YARN QUOTES FOR SS27 EASE'],['NL','*RETURN RATE 13.8% 30D, DOWN 1.1PP; FIT ISSUES LEAD REASONS'],['BN','*PORTO KNIT PO-2291 ARRIVES NOV 19, 1,240 UNITS'],['NL','*BLACK FRIDAY EARLY ACCESS LIST REACHES 41,200 SIGNUPS'],['DJ','*EU PARCEL DUTY RULES FOR LOW-VALUE IMPORTS TO TAKE EFFECT'],['NL','*NEW CHECKOUT AT 25% ROLLOUT, CONVERSION +0.31PP VS CONTROL'],['NS1','*PRATO MILL WOOL PRICES RISE 2.4% ON SUPPLY TIGHTNESS'],['NL','*SINGAPORE DC AT 66% CAPACITY, INBOUND PO-2301 DEC 02'],['BN','*CREATOR SEEDING CAMPAIGN ROAS 2.2X, BELOW 3.0X TARGET'],['NL','*PLEATED TROUSER SELLS 3.2X PLAN, REORDER BEFORE NOV 24'],['DJ','*GLOBAL APPAREL DEMAND HOLDS UP AS HOLIDAY SEASON OPENS']];
+const NEWS=NEWSP.slice(0,8).map((n,i)=>({s:n[0],t:Date.now()-i*37e3*3,x:n[1]}));
+const day=[];{const END=new Date();END.setHours(0,0,0,0);for(let i=0;i<730;i++){const d=new Date(END);d.setDate(END.getDate()-(729-i));const wk=[1.08,.94,.96,.98,1.0,1.06,1.12][d.getDay()],se=1+.12*Math.cos((d.getMonth()-10.5)/12*2*Math.PI);let rev=205e3*(1+i/730*.4)*se*wk*(.88+R()*.24);if(d.getMonth()==10&&d.getDate()>=24&&d.getDate()<=30)rev*=1.9;const aov=156*(1+i/730*.1);day.push({d,rev,orders:Math.round(rev/aov)})}}
+
+/* ========== FA engine ========== */
+const MW=[.065,.06,.07,.075,.075,.07,.07,.075,.085,.095,.135,.125];
+const mkP=(y,t,w,id,l,d,dl)=>({y,t,w,id,l,d,pp:{y:y-1,t:t-1,w,id:id-dl}});
+function periods(){const n=st.n,out=[];
+  if(st.kind==='Annuals'){for(let i=n-1;i>=0;i--){const y=2025-i;out.push(mkP(y,y+.5,1,y,y+' Y','12/31/'+y,1))}}
+  else if(st.kind==='Quarterly'){let y=2026,q=3;const a=[];for(let i=0;i<n;i++){a.push([y,q]);q--;if(q<1){q=4;y--}}a.reverse().forEach(([y,q])=>{const m0=(q-1)*3;out.push(mkP(y,y+(m0+1.5)/12,MW[m0]+MW[m0+1]+MW[m0+2],y*10+q,'Q'+q+' '+y,['03/31','06/30','09/30','12/31'][q-1]+'/'+y,10))})}
+  else{let y=2026,m=9;const a=[];for(let i=0;i<n;i++){a.push([y,m]);m--;if(m<0){m=11;y--}}a.reverse().forEach(([y,m])=>{out.push(mkP(y,y+(m+.5)/12,MW[m],y*100+m,new Date(y,m,1).toLocaleDateString('en-US',{month:'short'})+' '+y,pad(m+1)+'/'+new Date(y,m+1,0).getDate()+'/'+y,100))})}
+  return out}
+const BASE=[6200,4100,3300,2600,1500],GR=[.19,.21,.17,.15,.22],OM=[.17,.21,.13,.19,.24];
+function calc(p,np){
+  const sh=p.y==2020?.88:p.y==2021?1.05:1,tt=p.t-2016.5,k=i=>1+(hh(p.id,i)-.5)*.04,C={tt};
+  C.cat=CAT.map((_,c)=>BASE[c]*Math.pow(1+GR[c],tt)*p.w*sh*k(c));
+  const gross=sum(C.cat);C.elim=-gross*.0021*(1+hh(p.id,9));C.rev=gross+C.elim;
+  const gm=.59+tt*.0035+(hh(p.id,3)-.5)*.01;C.gm=gm*100;C.cogsT=C.rev*(1-gm);
+  C.cogs=[.55,.22,.12,.07,.04].map(s=>C.cogsT*s);C.gp=C.rev-C.cogsT;
+  C.opx=[.19-tt*.004,.082-tt*.0008,.15-tt*.003,.028+tt*.0006,.034-tt*.0004,.022].map(s=>C.rev*s);C.opxT=sum(C.opx);
+  C.ebitda=C.gp-C.opxT;C.da=C.rev*.018;C.ebit=C.ebitda-C.da;C.int=C.rev*.004;C.ebt=C.ebit-C.int;C.tax=Math.max(0,C.ebt*.24);C.ni=C.ebt-C.tax;
+  const ann=C.rev/p.w;
+  C.aov=148+tt*3.4;C.orders=C.rev*1000/C.aov;C.upt=2.05+tt*.01;C.units=C.orders*C.upt;C.conv=(.021+tt*.0007)*100;C.sess=C.orders/(C.conv/100);C.cust=C.orders*.62;C.newc=C.cust*(.44-tt*.009);C.emp=Math.round(180+tt*150);
+  C.ret=Math.max(6,19-tt*.45+(hh(p.id,4)-.5)*.6);C.sell=58+tt*.9+(hh(p.id,6)-.5)*2;
+  C.cash=ann*(.12+tt*.006);C.rec=ann*.045;C.inv=C.cat.map(c=>c/gross*ann*.21);C.invT=sum(C.inv);C.ppe=ann*.14;C.oa=ann*.03;C.ta=C.cash+C.rec+C.invT+C.ppe+C.oa;
+  C.ap=ann*.058;C.defr=ann*.012;C.debt=ann*(.1-tt*.004);C.ol=ann*.02;C.tl=C.ap+C.defr+C.debt+C.ol;C.eq=C.ta-C.tl;
+  C.wc=-ann*.006*p.w;C.cfo=C.ni+C.da+C.wc;C.capex=-C.rev*.042;C.cff=-C.rev*.01+(tt<3?C.rev*.05:0);C.net=C.cfo+C.capex+C.cff;
+  const rs=[.44-.0055*tt,.34-.0015*tt,.14+.004*tt,.05+.003*tt];rs.push(1-sum(rs));C.reg=rs.map(s=>C.rev*s);C.regS=rs;
+  const app=Math.max(0,(tt-3)*.0185),wh=Math.max(.05,.2-.012*tt),mk=.06+.003*tt,rt=.2-.0015*tt,web=1-app-wh-mk-rt;C.chan=[web,app,rt,mk,wh].map(s=>C.rev*s);C.chS=[web,app,rt,mk,wh];
+  C.oi=C.cat.map((c,i)=>c*(OM[i]-.03+tt*.002));C.unal=C.ebit-sum(C.oi);
+  C.dso=ann?C.rec/ann*365:0;C.dio=C.invT/(C.cogsT/p.w)*365;C.turn=(C.cogsT/p.w)/C.invT;
+  C.rec2=Math.min(99,12+tt*3.2);C.co2=8.4-tt*.26;C.water=310-tt*9;C.aud=78+tt*1.6;C.lw=Math.min(100,40+tt*5);C.wm=38+tt*1.1;C.pkg=Math.min(99,55+tt*4);
+  if(!np){const q=calc(p.pp,1);C.g=(C.rev/q.rev-1)*100;C.og=(C.orders/q.orders-1)*100}
+  return C}
+const G=(id,l,f,o={})=>({id,l,f,lvl:0,grp:1,...o}),K=(id,l,f,o={})=>({id,l,f,lvl:1,...o}),L=(id,l,f,o={})=>({id,l,f,lvl:2,...o});
+const catKids=(pre,f,of,fmt)=>CAT.map((n,i)=>K(pre+i,n,C=>f(C,i),{of,fmt}));
+const regKids=(pre,f,of,fmt)=>REGN.map((n,i)=>K(pre+i,n,C=>f(C,i),{of,fmt}));
+const chKids=(pre,f,of,fmt)=>CHN.map((n,i)=>K(pre+i,n,C=>f(C,i),{of,fmt}));
+function rowsFor(t,s){
+  if(t==1)return[G('rev','Revenue',C=>C.rev,{kids:1,p100:1}),K('g','Revenue growth, year over year',C=>C.g,{fmt:'p'}),G('gp','Gross Profit',C=>C.gp,{of:'rev'}),K('gm','Gross margin',C=>C.gm,{fmt:'p'}),G('ebitda','EBITDA',C=>C.ebitda,{of:'rev'}),K('em','EBITDA margin',C=>C.ebitda/C.rev*100,{fmt:'p'}),G('ni','Net Income',C=>C.ni,{of:'rev'}),K('nm','Net margin',C=>C.ni/C.rev*100,{fmt:'p'}),
+    G('com','Commerce',null,{kids:1,nov:1}),K('orders','Orders',C=>C.orders,{fmt:'c'}),K('aov','Average order value',C=>C.aov),K('units','Units sold',C=>C.units,{fmt:'c'}),K('sess','Sessions',C=>C.sess,{fmt:'c'}),K('conv','Conversion rate',C=>C.conv,{fmt:'p'}),K('cust','Active customers',C=>C.cust,{fmt:'c'}),K('newc','New customers',C=>C.newc,{fmt:'c'}),K('ret','Return rate',C=>C.ret,{fmt:'p'}),K('sell','Sell-through',C=>C.sell,{fmt:'p'}),
+    G('bal','Balance Sheet',null,{kids:1,nov:1}),K('cash','Cash and equivalents',C=>C.cash),K('invT','Inventory',C=>C.invT),K('turn','Inventory turns',C=>C.turn,{fmt:'x'}),K('debt','Debt',C=>C.debt)];
+  if(t==2)return[G('rev','Revenue',C=>C.rev,{kids:1,p100:1}),...catKids('rc',(C,i)=>C.cat[i],'rev'),K('elim','Accounting differences/eliminations',C=>C.elim),
+    G('cogs','Cost of Goods Sold',C=>C.cogsT,{kids:1,of:'rev'}),...['Materials and fabric','Factory labor','Inbound freight','Duties and tariffs','Other direct costs'].map((n,i)=>K('cg'+i,n,C=>C.cogs[i],{of:'cogs'})),
+    G('gp','Gross Profit',C=>C.gp,{of:'rev'}),G('opx','Operating Expenses',C=>C.opxT,{kids:1,of:'rev'}),...['Marketing and creative','Fulfilment and shipping','Payroll and benefits','Technology and platform','Rent and utilities','Other operating'].map((n,i)=>K('ox'+i,n,C=>C.opx[i],{of:'opx'})),
+    G('ebitda','EBITDA',C=>C.ebitda,{of:'rev'}),K('da','Depreciation and amortization',C=>C.da),G('ebit','Operating Income (EBIT)',C=>C.ebit,{of:'rev'}),K('int','Interest expense',C=>C.int),G('ebt','Pre-tax Income',C=>C.ebt,{of:'rev'}),K('tax','Income tax',C=>C.tax),G('ni','Net Income',C=>C.ni,{of:'rev'})];
+  if(t==3)return[G('ta','Total Assets',C=>C.ta,{kids:1,p100:1}),K('cash','Cash and equivalents',C=>C.cash,{of:'ta'}),K('rec','Wholesale receivables',C=>C.rec,{of:'ta'}),K('invT','Inventory',C=>C.invT,{kids:1,of:'ta',closed:1}),...CAT.map((n,i)=>L('iv'+i,n,C=>C.inv[i],{of:'invT'})),K('ppe','Stores, equipment and fixtures',C=>C.ppe,{of:'ta'}),K('oa','Other assets',C=>C.oa,{of:'ta'}),
+    G('tl','Total Liabilities',C=>C.tl,{kids:1,p100:1}),K('ap','Supplier payables',C=>C.ap,{of:'tl'}),K('defr','Gift cards and deferred revenue',C=>C.defr,{of:'tl'}),K('debt','Debt',C=>C.debt,{of:'tl'}),K('ol','Other liabilities',C=>C.ol,{of:'tl'}),G('eq','Shareholders Equity',C=>C.eq,{of:'ta'})];
+  if(t==4)return[G('cfo','Cash from Operating Activities',C=>C.cfo,{kids:1}),K('ni','Net income',C=>C.ni),K('da','Depreciation and amortization',C=>C.da),K('wc','Change in working capital',C=>C.wc),G('cfi','Cash from Investing Activities',C=>C.capex,{kids:1}),K('capex','Capital expenditures',C=>C.capex*.7),K('stc','New store fit-outs',C=>C.capex*.3),G('cff','Cash from Financing Activities',C=>C.cff,{kids:1}),K('rep','Debt repayment',C=>-C.rev*.01),K('iss','Debt and equity issued',C=>C.cff+C.rev*.01),G('net','Net Change in Cash',C=>C.net),G('fcf','Free Cash Flow',C=>C.cfo+C.capex,{of:'rev'})];
+  if(t==5)return[G('pr','Profitability',null,{kids:1,nov:1}),K('gm','Gross margin',C=>C.gm,{fmt:'p'}),K('em','EBITDA margin',C=>C.ebitda/C.rev*100,{fmt:'p'}),K('om','Operating margin',C=>C.ebit/C.rev*100,{fmt:'p'}),K('nm','Net margin',C=>C.ni/C.rev*100,{fmt:'p'}),K('roe','Return on equity (annualized)',C=>C.ni/C.eq*100,{fmt:'p'}),
+    G('li','Liquidity and Leverage',null,{kids:1,nov:1}),K('cr','Current ratio',C=>(C.cash+C.rec+C.invT)/(C.ap+C.defr+C.ol),{fmt:'x'}),K('de','Debt to EBITDA (period)',C=>C.debt/C.ebitda,{fmt:'x'}),K('dso','Days sales outstanding',C=>C.dso,{fmt:'c1'}),K('dio','Days inventory outstanding',C=>C.dio,{fmt:'c1'}),K('turn','Inventory turns',C=>C.turn,{fmt:'x'}),
+    G('cu','Customer',null,{kids:1,nov:1}),K('conv','Conversion rate',C=>C.conv,{fmt:'p'}),K('aov','Average order value',C=>C.aov),K('ret','Return rate',C=>C.ret,{fmt:'p'}),K('sell','Sell-through',C=>C.sell,{fmt:'p'}),K('cac','Customer acquisition cost',C=>C.opx[0]*1000/C.newc*.62),K('ltvcac','LTV to CAC',C=>(C.aov*C.upt*.6*2.6)/(C.opx[0]*1000/C.newc*.62),{fmt:'x'}),K('rpe','Revenue per employee',C=>C.rev/C.emp*(1/1))];
+  if(t==7)return[G('vol','Volume',null,{kids:1,nov:1}),K('orders','Orders',C=>C.orders,{fmt:'c'}),K('units','Units sold',C=>C.units,{fmt:'c'}),K('upt','Units per order',C=>C.upt,{fmt:'x'}),K('sess','Sessions',C=>C.sess,{fmt:'c'}),K('cust','Active customers',C=>C.cust,{fmt:'c'}),K('newc','New customers',C=>C.newc,{fmt:'c'}),
+    G('org','Organization',null,{kids:1,nov:1}),K('emp','Employees',C=>C.emp,{fmt:'c'}),K('stores','Retail stores',(C)=>Math.round(2+C.tt*1.4),{fmt:'c'}),K('sqm','Retail floor space (sqm)',C=>Math.round((2+C.tt*1.4)*215),{fmt:'c'}),K('dcs','Distribution centres',C=>Math.min(4,1+Math.floor(C.tt/2.6)),{fmt:'c'}),K('sku','Active styles',C=>Math.round(90+C.tt*28),{fmt:'c'}),K('fac','Contract factories',C=>Math.min(8,2+Math.floor(C.tt/1.4)),{fmt:'c'}),
+    G('mkt','Marketing',null,{kids:1,nov:1}),K('mkt','Marketing spend',C=>C.opx[0]),K('roas','Blended ROAS',C=>C.rev/C.opx[0],{fmt:'x'}),K('em','Email share of revenue',C=>14+C.tt*.5,{fmt:'p'})];
+  if(t==8)return[G('env','Environment',null,{kids:1,nov:1}),K('rec2','Recycled or certified materials',C=>C.rec2,{fmt:'p'}),K('co2','Carbon per unit (kg CO2e)',C=>C.co2,{fmt:'d'}),K('water','Water per unit (litres)',C=>C.water,{fmt:'d'}),K('pkg','Recyclable packaging',C=>C.pkg,{fmt:'p'}),
+    G('soc','Social',null,{kids:1,nov:1}),K('aud','Factory audit score',C=>C.aud,{fmt:'d'}),K('lw','Workers paid a living wage',C=>C.lw,{fmt:'p'}),K('wm','Women in leadership',C=>C.wm,{fmt:'p'}),
+    G('gov','Governance',null,{kids:1,nov:1}),K('tr','Suppliers traced to mill',C=>Math.min(100,30+C.tt*7),{fmt:'p'}),K('ethic','Code of conduct signed',C=>Math.min(100,60+C.tt*4.5),{fmt:'p'})];
+  if(t==6&&s==12)return[G('rev','Revenue',C=>C.rev,{kids:1,p100:1}),...regKids('rr',(C,i)=>C.reg[i],'rev'),G('ord','Orders by Region',C=>C.orders,{kids:1,p100:1,fmt:'c'}),...regKids('ro',(C,i)=>C.orders*C.regS[i],'ord','c'),G('oi','Operating Income by Region',C=>C.ebit,{kids:1,p100:1}),...regKids('rg',(C,i)=>C.ebit*C.regS[i]*(1+(i-1.5)*.03),'oi'),G('cu','Active Customers by Region',C=>C.cust,{kids:1,p100:1,fmt:'c'}),...regKids('rcu',(C,i)=>C.cust*C.regS[i],'cu','c'),G('ret','Return Rate by Region',null,{kids:1,nov:1}),...regKids('rrt',(C,i)=>C.ret*[.86,1.0,1.12,1.18,1.05][i],null,'p')];
+  if(t==6&&s==13)return[G('rev','Revenue',C=>C.rev,{kids:1,p100:1}),...chKids('cr',(C,i)=>C.chan[i],'rev'),G('gp','Gross Profit by Channel',C=>C.gp,{kids:1,p100:1}),...chKids('cg',(C,i)=>C.gp*C.chS[i]*[1.03,1.08,.98,.82,.72][i],'gp'),G('mk','Marketing by Channel',C=>C.opx[0],{kids:1,p100:1}),...chKids('cm',(C,i)=>C.opx[0]*[.33,.27,.14,.2,.06][i],'mk'),G('or','Orders by Channel',C=>C.orders,{kids:1,p100:1,fmt:'c'}),...chKids('co',(C,i)=>C.orders*C.chS[i]*[1.12,1.06,.7,.95,.15][i],'or','c')];
+  if(t==6)return[G('rev','Revenue',C=>C.rev,{kids:1,p100:1}),...catKids('rc',(C,i)=>C.cat[i],'rev'),K('elim','Accounting differences/eliminations',C=>C.elim),K('bdr','Brand Direct Retail',()=>null),K('oth','Other',()=>null),K('ate','Atelier Special Projects',()=>null,{kids:1,closed:1}),L('bsp','Bespoke and made-to-measure',()=>null),L('cap','Capsule collaborations',()=>null),
+    G('eu','Revenue by End User',C=>C.rev,{kids:1,p100:1}),K('tot','Total Revenue',C=>C.rev,{kids:1,closed:1,of:'eu'}),L('dtc','Direct to consumer',C=>C.chan[0]+C.chan[1]+C.chan[2],{of:'tot'}),L('mkp','Marketplaces',C=>C.chan[3],{of:'tot'}),L('whl','Wholesale and trade',C=>C.chan[4],{of:'tot'}),
+    G('oi','Operating Income',C=>C.ebit,{kids:1,p100:1}),...catKids('oi',(C,i)=>C.oi[i],'oi'),K('unal','Unallocated Expenses',C=>C.unal),
+    G('gpc','Gross Profit',C=>C.gp,{kids:1,p100:1,closed:1}),...catKids('gp',(C,i)=>C.gp*C.cat[i]/sum(C.cat)*[.96,1.02,.97,1.0,1.08][i],'gpc'),
+    G('ivc','Inventory by Category',C=>C.invT,{kids:1,p100:1,closed:1}),...catKids('ic',(C,i)=>C.inv[i],'ivc'),
+    G('uc','Units Sold by Category',C=>C.units,{kids:1,p100:1,closed:1,fmt:'c'}),...catKids('uc',(C,i)=>C.units*C.cat[i]/sum(C.cat),'uc','c')];
+  return[]}
+function allRows(){const m={};[[1],[2],[3],[4],[5],[7],[8],[6,11],[6,12],[6,13]].forEach(([t,s])=>rowsFor(t,s).forEach(r=>{if(!r.nov&&!m[r.id])m[r.id]=r}));return m}
+function fmtV(v,r){if(v==null)return'—';const f=r.fmt||'n';return f==='n'?N(mv(v)):f==='c'?N(v*sc(),0):f==='c1'?N(v,1):f==='p'?N(v)+'%':f==='x'?N(v,2)+'x':N(v)}
+function faTable(rows,P,Cs){
+  const pc=st.pct,span=pc?2:1;
+  const map={};rows.forEach(r=>map[r.id]=r);
+  let h=`<table><thead><tr><th class="c1" style="width:30px"></th><th class="c2">In ${st.cur==='USD'?'Thousands of USD':'Thousands of '+st.cur} except Per Unit</th>${P.map(p=>`<th colspan="${span}">${p.l}</th>`).join('')}</tr><tr class="h2"><th class="c1"></th><th class="c2">${st.kind==='Annuals'?'12 Months Ending':st.kind==='Quarterly'?'3 Months Ending':'1 Month Ending'}</th>${P.map(p=>`<th colspan="${span}">${p.d}</th>`).join('')}</tr></thead><tbody>`;
+  let skip=-1;
+  rows.forEach(r=>{
+    if(skip>=0){if(r.lvl>skip)return;skip=-1}
+    const closed=r.kids&&(st.col[r.id]!==undefined?st.col[r.id]:!!r.closed);if(closed)skip=r.lvl;
+    const vals=Cs.map((C,i)=>r.f?r.f(C,P[i]):null);
+    h+=`<tr class="${r.grp?'g':''}"><td class="ic"><span data-ic="${r.id}" title="Chart">${miniIcon}</span></td><td class="lb" style="padding-left:${8+r.lvl*16}px">${r.kids?`<i class="tg" data-tg="${r.id}">${closed?'▸':'▾'}</i>`:'<i class="tg"></i>'}${r.l}</td>`;
+    vals.forEach((v,i)=>{h+=`<td class="v">${fmtV(v,r)}</td>`;if(pc){let p='';if(v!=null){if(r.p100)p='100.0%';else if(r.of&&map[r.of]){const b=map[r.of].f(Cs[i],P[i]);if(b)p=N(v/b*100)+'%'}}h+=`<td class="pc">${p}</td>`}});
+    h+='</tr>'});
+  return h+'</tbody></table>'}
+
+/* ========== screens ========== */
+const FNS=[['MON','Monitor · command overview'],['FA','Financial Analysis'],['DES','Description'],['RSK','Fulfilment Risk'],['ORD','Order Blotter'],['PRD','Product Analysis'],['INV','Inventory'],['CUS','Customers'],['MKT','Marketing'],['RTL','Retail Stores'],['RET','Returns and Support'],['PRO','Production']];
+const SC={};
+const tabsH=(list,act,attr)=>`<div class="tabs">${list.map((t,i)=>`<button class="${i+1===act?'on':''}" ${attr}="${i+1}">${t}</button>`).join('')}</div>`;
+const FATABS=['1) Key Stats','2) I/S','3) B/S','4) C/F','5) Ratios','6) Segments','7) Addl','8) ESG','9) Custom'];
+SC.FA={title:'Financial Analysis',btns:['96) Actions ▾','97) Export ▾','98) Settings'],html(){
+  const pn0=st.kind==='Annuals'?[4,6,8,10]:st.kind==='Quarterly'?[4,8,12,20]:[6,12,18,24];
+  const opt=pn0.map(v=>`<option ${v==st.n?'selected':''}>${v}</option>`).join('');
+  return`<div class="sr"><span class="dim">39)</span><b class="adj">ADJ</b><span class="cy">Nulla Co/The</span><span>ASC 842 <i class="qm">?</i></span><span class="am">Periods</span><select class="ob" id="pn">${opt}</select><select class="ob w" id="pk">${['Annuals','Quarterly','Monthly'].map(k=>`<option ${k==st.kind?'selected':''}>${k}</option>`).join('')}</select><span class="am">Cur</span><select class="ob" id="pc">${Object.keys(CUR).map(k=>`<option value="${k}" ${k==st.cur?'selected':''}>FRC (${k})</option>`).join('')}</select></div>`
+  +tabsH(FATABS,st.tab,'data-ftab')+(st.tab===6?`<div class="sub">${['11) By Measure','12) By Geography','13) By Segment'].map((t,i)=>`<button class="${11+i===st.sub?'on':''}" data-fsub="${11+i}">${t}</button>`).join('')}</div>`:`<div class="sub" style="height:6px"></div>`)
+  +`<div class="body"><div class="fa" id="fa">${faBody()}</div><div class="fanav"><button data-fs="-9e5">&lt;&lt;</button><button data-fs="-480">&lt;</button><button data-fs="480">&gt;</button><button data-fs="9e5">&gt;&gt;</button><span class="dim" style="align-self:center;font-size:12px">Click ▾ ▸ to expand rows · click a chart icon to plot a row · click a column header on other screens to sort</span></div></div>`},
+  after(){const f=$('#fa');if(f)f.scrollLeft=f.scrollWidth}};
+function faBody(){
+  const P=periods(),Cs=P.map(p=>calc(p));let rows;
+  if(st.tab===9){const cat=allRows();rows=st.cust.map(id=>({...cat[id],lvl:0,grp:1,kids:0,p100:0,of:null})).filter(r=>r.id);
+    const opts=Object.values(cat).filter(r=>!st.cust.includes(r.id)).map(r=>`<option value="${r.id}">${r.l}</option>`).join('');
+    return`<div style="padding:4px 8px;display:flex;gap:12px;align-items:center;font-size:14px;position:sticky;left:0"><span class="am">Add metric</span><select class="ob w" id="cadd"><option value="">Select...</option>${opts}</select><span class="dim">${st.cust.length} rows · click a label's chart icon, or remove with the button</span>${st.cust.map(id=>`<button class="am" data-crm="${id}" style="border:1px solid #5a3a00;padding:0 8px">${(cat[id]||{}).l||id} ×</button>`).join('')}</div>`+faTable(rows,P,Cs)}
+  rows=rowsFor(st.tab,st.sub);return faTable(rows,P,Cs)}
+
+/* ----- DES ----- */
+const DTABS=['1) Profile','2) Issue Info','3) Ratios','4) Revenue & EPS','5) Industry Info'];
+SC.DES={title:'Page 1/5 Security Description: Equity',btns:['96) Report'],html(){
+  const P=periods.call(null),a=[2023,2024,2025].map(y=>calc(mkP(y,y+.5,1,y,'','',1))),L=a[2],px=day.slice(-250).map(d=>d.rev/1000);
+  const tabs=tabsH(DTABS,st.des,'data-dtab');let body='';
+  if(st.des===1)body=`<div class="gr" style="grid-template-columns:1.4fr 1fr;grid-template-rows:auto minmax(0,1fr) minmax(0,.9fr)">
+   ${pn('Description','',`<div class="desc"><h2>NULLA CO/THE</h2>NULLA designs, produces and sells monochrome premium clothing and leather goods. The company runs its own web store and app, 14 retail stores, selected marketplaces and a wholesale channel across North America, Europe, Asia-Pacific and the Middle East. Cloth is woven at partner mills and garments are cut and sewn in eight contract factories. <small>Founded 2016 · Fiscal year ends Dec 31</small></div>`,'grid-column:1/2')}
+   ${pn('Corporate Info','CIX',kv([['Website','www.nulla.example'],['Headquarters','Rotterdam, NL'],['Employees',N(L.emp,0)+' (12/31/2025)'],['Active styles',N(90+L.tt*28,0)],['Contract factories','8'],['Retail stores','14'],['Distribution centres','4']]),'grid-column:2/3;grid-row:1/3')}
+   ${pn('Price Chart · Net revenue per day, $K','GP',ch((w,h)=>line(w,h,{labels:day.slice(-250).map(d=>d.d.toLocaleDateString('en-US',{month:'short',day:'numeric'})),series:[{name:'Net revenue $K',data:px,area:1},{name:'28D average',c:'#42c6ff',data:px.map((_,i)=>sum(px.slice(Math.max(0,i-27),i+1))/Math.min(28,i+1))}],zero:false,fmt:v=>'$'+N(v,1)+'K'})),'grid-column:1/2',{fx:1})}
+   ${pn('Key Figures','',kv([['Net revenue, last 12M','$'+N(mv(sum(day.slice(-365),d=>d.rev))/1e6,2)+'M'],['Gross margin','61.8%'],['EBITDA margin','18.4%'],['Orders, last 12M',N(sum(day.slice(-365),d=>d.orders)*sc(),0)],['Active customers',N(L.cust*sc(),0)],['Sell-through, season to date','54%'],['Return rate, 30D','13.8%'],['Stock cover','54 days'],['Net revenue 1D / 30D',sgn(-.7)+' / '+sgn(4.2)+'%']]),'grid-column:1/2;grid-row:3')}
+   ${pn('Estimates','EE',kv([['Next report','12/03/2026 (E)'],['Q4 revenue estimate','$'+N(mv(L.rev*.3)/1000,1)+'M'],['Q4 EBITDA margin est.','19.1%'],['FY26 revenue est.','$'+N(mv(L.rev*1.18)/1000,1)+'M'],['FY26 orders est.',N(L.orders*1.17*sc()/1000,0)+'K'],['Black Friday uplift est.','+1.9x']]),'grid-column:2/3;grid-row:3')}
+  </div>`;
+  if(st.des===2)body=`<div class="gr" style="grid-template-columns:1fr 1fr">${pn('Issue Info','ISS',kv([['Entity','NULLA CO/THE'],['Ticker','NL OPS'],['Currency','USD'],['Fiscal year end','12/31'],['Revenue recognition','On delivery'],['Return reserve','13.8% of gross sales'],['Gift card liability','$'+N(mv(L.defr)/1000,2)+'M'],['Inventory method','FIFO, lower of cost and net realisable value']]))}${pn('Calendar','CAL',`<ul class="lst">${[['11/19','PO-2291 Porto Knit arrives'],['11/24','Black Friday early access'],['11/27','Black Friday'],['11/30','Cyber Monday'],['12/02','PO-2308 Bursa Tailoring arrives'],['12/03','Q4 report (E)'],['12/12','Atelier Resort lookbook']].map(r=>`<li><span class="am">${r[0]}</span>${r[1]}</li>`).join('')}</ul>`)}</div>`;
+  if(st.des===3)body=`<div class="gr">${pn('Ratios, last three fiscal years','FA',`<table class="dt"><thead><tr><th>Ratio</th>${[2023,2024,2025].map(y=>`<th class="r">${y}</th>`).join('')}</tr></thead><tbody>${[['Gross margin',c=>N(c.gm)+'%'],['EBITDA margin',c=>N(c.ebitda/c.rev*100)+'%'],['Net margin',c=>N(c.ni/c.rev*100)+'%'],['Inventory turns',c=>N(c.turn,2)+'x'],['Days inventory',c=>N(c.dio)],['Return rate',c=>N(c.ret)+'%'],['Conversion',c=>N(c.conv,2)+'%'],['Average order value',c=>'$'+N(mv(c.aov)/sc(),0)],['Debt to EBITDA',c=>N(c.debt/c.ebitda,2)+'x'],['Current ratio',c=>N((c.cash+c.rec+c.invT)/(c.ap+c.defr+c.ol),2)+'x']].map(r=>`<tr><td>${r[0]}</td>${a.map(c=>`<td class="r">${r[1](c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`)}</div>`;
+  if(st.des===4){const q=[];let y=2024,qq=4;for(let i=0;i<8;i++){const m0=(qq-1)*3;q.push({l:'Q'+qq+' '+y,C:calc(mkP(y,y+(m0+1.5)/12,MW[m0]+MW[m0+1]+MW[m0+2],y*10+qq,'','',10))});qq++;if(qq>4){qq=1;y++}}
+    body=`<div class="gr" style="grid-template-columns:1.2fr 1fr">${pn('Revenue and EBITDA by quarter, $K','BQ',ch((w,h)=>bars(w,h,{labels:q.map(x=>x.l),series:[{name:'Revenue',data:q.map(x=>mv(x.C.rev))},{name:'EBITDA',data:q.map(x=>mv(x.C.ebitda)),c:'#42c6ff'}]})),'',{fx:1})}${pn('Quarterly detail','',`<table class="dt"><thead><tr><th>Quarter</th><th class="r">Revenue</th><th class="r">EBITDA</th><th class="r">Net income</th><th class="r">Orders</th></tr></thead><tbody>${q.map(x=>`<tr><td>${x.l}</td><td class="r">${N(mv(x.C.rev))}</td><td class="r">${N(mv(x.C.ebitda))}</td><td class="r">${N(mv(x.C.ni))}</td><td class="r">${N(x.C.orders*sc(),0)}</td></tr>`).join('')}</tbody></table>`)}</div>`}
+  if(st.des===5){const peers=[['NULLA CO/THE',L.rev,L.g,L.gm,L.ebitda/L.rev*100,L.turn],['Maison Orlane',L.rev*3.1,9.2,64.1,21.4,2.4],['Fenwick & Dale',L.rev*1.4,14.8,58.7,15.1,3.2],['Atelier Voss',L.rev*.6,22.1,66.3,12.4,2.1],['Hollis Knit Co.',L.rev*2.2,7.4,55.2,13.8,3.6],['Studio Marren',L.rev*.35,31.5,60.9,9.2,2.8]].map(r=>({n:r[0],rev:r[1],g:r[2],gm:r[3],em:r[4],t:r[5]}));
+    body=`<div class="gr">${pn('Peer comparison, fiscal 2025','COMP',tb('peer',[{k:'n',l:'Company',f:v=>`<span class="${v.startsWith('NULLA')?'am':''}">${v}</span>`},{k:'rev',l:'Revenue $K',a:'r',f:v=>N(mv(v)/sc())},{k:'g',l:'Growth',a:'r',f:v=>sgn(v,1,'%')},{k:'gm',l:'Gross margin',a:'r',f:v=>N(v)+'%'},{k:'em',l:'EBITDA margin',a:'r',f:v=>N(v)+'%'},{k:'t',l:'Inventory turns',a:'r',f:v=>N(v,2)+'x'}],peers,{sort:'rev'}))}</div>`}
+  return tabs+`<div class="sub" style="height:6px"></div><div class="body">${body}</div>`}};
+
+/* ----- RSK ----- */
+SC.RSK={title:'Fulfilment Risk',btns:['96) Actions ▾','97) Export ▾','98) Settings'],html(){
+  const mo=Array.from({length:52},(_,i)=>'W'+(i+1)),rk=mo.map((_,i)=>.2+.12*Math.sin(i/6)+.05*Math.sin(i/2.3)+(i>40?(i-40)*.012:0)),inp=[['Stock cover (days)',54.2,48.0,61],['Backorder rate',2.1,3.4,38],['Supplier on-time',94.0,91.2,72],['Carrier on-time',96.2,95.1,68],['Pick accuracy',99.4,98.8,81],['Return backlog (units)',840,1210,29],['Peak load factor',1.18,1.12,57],['Payment failure rate',1.9,2.4,34],['Lead time (days)',36.2,41.5,26],['Capacity used',77,72,64]].map((r,i)=>({n:r[0],v:r[1],s:r[2],p:r[3]}));
+  const sect=[['NULLA CO/THE',.28,.2,.44],['Maison Orlane',.19,.12,.31],['Fenwick & Dale',.34,.22,.52],['Atelier Voss',.41,.28,.66],['Hollis Knit Co.',.25,.18,.38],['Studio Marren',.52,.31,.9]].map(r=>({n:r[0],v:r[1],lo:r[2],hi:r[3]}));
+  const hist=Array.from({length:14},(_,i)=>Math.round(220*Math.exp(-Math.pow((i-4.2)/2.6,2))+14*hh(i,2)));
+  return`<div class="sr"><span class="am">Fulfilment risk model</span><span class="dim">Horizon</span><b class="ob" style="padding:0 12px">1 Year</b><span class="dim">Peer set</span><b class="ob" style="padding:0 12px">Premium apparel</b></div><div class="sub" style="height:6px"></div>
+  <div class="body"><div class="gr" style="grid-template-columns:1fr 1.5fr 1fr;grid-template-rows:minmax(0,1.1fr) minmax(0,1fr)">
+  ${pn('1-Year Fulfilment Failure Probability','RSK',`<div class="big">0.27968%</div><div class="dim" style="padding:0 12px">Model score 1.9 · down 0.04 pp over 30D</div><div style="position:absolute;left:0;right:0;bottom:0;top:78px">${ch((w,h)=>gauge(w,h,.28,1,'0.28%','probability of failing to ship on time'))}</div>`,'',{fx:1})}
+  ${pn('Failure probability history','HIS',ch((w,h)=>line(w,h,{labels:mo,series:[{name:'Probability %',data:rk,area:1},{name:'Peer median %',c:'#42c6ff',dash:1,data:rk.map((v,i)=>.32+.07*Math.sin(i/9))}],fmt:v=>N(v,3)+'%',yf:v=>N(v,2)+'%',zero:false})),'',{fx:1})}
+  ${pn('Delay distribution, hours late','DIS',ch((w,h)=>bars(w,h,{labels:hist.map((_,i)=>i*4),series:[{name:'Orders',data:hist}]})),'',{fx:1})}
+  ${pn('Model Inputs','MI',tb('rin',[{k:'n',l:'Input'},{k:'v',l:'Value',a:'r',f:v=>N(v,v>100?0:1)},{k:'s',l:'Peer median',a:'r',f:v=>`<span class="dim">${N(v,v>100?0:1)}</span>`},{k:'p',l:'Percentile',a:'r',f:v=>bar(v)+v}],inp,{sort:'p'}),'grid-column:1/2')}
+  ${pn('Peer comparison','PEER',tb('rpe',[{k:'n',l:'Company',f:v=>`<span class="${v.startsWith('NULLA')?'am':''}">${v}</span>`},{k:'v',l:'Risk %',a:'r',f:v=>N(v,3)},{k:'lo',l:'Low',a:'r',f:v=>N(v,2)},{k:'hi',l:'High',a:'r',f:v=>N(v,2)},{k:'x',l:'Range',ns:1,f:(_,r)=>`<span style="display:inline-block;width:120px;height:6px;background:#222;position:relative;vertical-align:middle"><i style="position:absolute;left:${r.lo/1*100}%;width:${(r.hi-r.lo)*100}%;top:0;bottom:0;background:#444"></i><i style="position:absolute;left:${r.v*100}%;top:-2px;width:3px;height:10px;background:#ffa21f"></i></span>`}],sect,{sort:'v',dir:1}),'grid-column:2/3')}
+  ${pn('Drivers, last 90D','DRV',`<ul class="lst">${[['Carrier delays, Middle East lanes','+0.041',1],['Stock cover on outerwear','+0.028',1],['Supplier on-time, knitwear','+0.019',1],['Pick accuracy gain','-0.016',0],['Second DC in Asia-Pacific','-0.022',0],['Express upgrade policy','-0.009',0]].map(r=>`<li><span class="${r[2]?'dn':'up'}">${r[1]}</span>${r[0]}</li>`).join('')}</ul>`,'grid-column:3/4')}
+  </div></div>`}};
+
+/* ----- MON ----- */
+SC.MON={title:'Monitor · command overview',btns:['96) Actions ▾','97) Export ▾','98) Settings'],html(){
+  const d=day.slice(-90),p=day.slice(-180,-90),top=[...PR].sort((a,b)=>b.wow-a.wow),mv2=[...top.slice(0,6),...top.slice(-6)];
+  const hmx=Array.from({length:7},(_,x)=>Array.from({length:12},(_,b)=>Math.round(60*(.35+Math.exp(-Math.pow((b-9.2)/2.3,2))*1.1+(x>4?.45:0)+hh(x,b)*.25))));
+  return`<div class="sr"><span class="am">Command overview</span><span class="dim">All entities · USD · auto-refresh 6s</span></div><div class="sub" style="height:6px"></div><div class="body"><div class="gr" style="grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:minmax(0,1.1fr) minmax(0,1fr) minmax(0,.85fr)">
+  ${pn('Net revenue per day, 90D vs prior 90D · $K','GP',ch((w,h)=>line(w,h,{labels:d.map(x=>x.d.toLocaleDateString('en-US',{month:'short',day:'numeric'})),series:[{name:'Current',data:d.map(x=>mv(x.rev)/1000),area:1},{name:'Prior',c:'#9a9a9a',dash:1,data:p.map(x=>mv(x.rev)/1000)}],fmt:v=>'$'+N(v,1)+'K'})),'grid-column:span 7',{fx:1})}
+  ${pn('Movers · units, week over week','MOV',tb('mov',[{k:'name',l:'Style'},{k:'cat',l:'Category'},{k:'units',l:'Units 30D',a:'r',f:v=>N(v,0)},{k:'wow',l:'WoW %',a:'r',f:v=>sgn(v,1,'%')},{k:'sp',l:'14D',ns:1,f:v=>spark(54,14,v,'#ffa21f')}],mv2,{sort:'wow'}),'grid-column:span 5')}
+  ${pn('Order blotter · live','ORD',tb('mord',ORDC(),ORD,{max:40,sort:'ts'}),'grid-column:span 7')}
+  ${pn('Alerts','ALRT',`<ul class="lst">${[['dn','WOOL OVERCOAT out of stock M, L · Rotterdam','12m'],['am','PLEATED TROUSER sells 3.2x plan · reorder','1h'],['am','KARACHI ATELIER 2 days behind · 1,840 units','3h'],['cy','APPLE PAY failures +1.4pp UK, UAE','5h'],['cy','23 returns wait for approval, oldest 31h','8h'],['up','SINGAPORE DC inbound PO-2301 confirmed','9h'],['am','CAMPAIGN creator seeding ROAS 2.2x below target','11h'],['cy','NEW CHECKOUT 25% rollout converts +0.31pp','1d']].map(a=>`<li><span class="${a[0]}">●</span>${a[1]}<time>${a[2]}</time></li>`).join('')}</ul>`,'grid-column:span 5')}
+  ${pn('Revenue by category, 30D · $K','CAT',ch((w,h)=>bars(w,h,{labels:CAT,series:[{name:'Revenue',data:CAT.map((_,i)=>mv(sum(PR.filter(p=>p.ci==i),p=>p.rev)))}],fmt:v=>'$'+N(v/1000,1)+'K'})),'grid-column:span 4',{fx:1})}
+  ${pn('Orders by weekday and hour','HM',heat(['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],['0','2','4','6','8','10','12','14','16','18','20','22'],hmx,{lw:'34px'}),'grid-column:span 4')}
+  ${pn('Stores · sales per sqm','RTL',tb('mst',[{k:'name',l:'Store'},{k:'psm',l:'$/sqm',a:'r',f:v=>N(mv(v)/sc(),0)},{k:'yoy',l:'YoY',a:'r',f:v=>sgn(v,1,'%')},{k:'sp',l:'12M',ns:1,f:v=>spark(54,14,v,'#42c6ff')}],STORES,{sort:'psm'}),'grid-column:span 4')}
+  </div></div>`}};
+const stC={Paid:'cy',Packing:'yl',Shipped:'am',Delivered:'up',Returned:'dn',Refunded:'dn',Cancelled:'dim'};
+function ORDC(){return[{k:'ts',l:'Time',f:v=>`<span class="dim">${hms(new Date(v))}</span>`},{k:'id',l:'Order',f:v=>`<span class="am">${v}</span>`},{k:'cust',l:'Customer'},{k:'cc',l:'Ctry'},{k:'items',l:'Qty',a:'r'},{k:'chan',l:'Channel'},{k:'total',l:'Total',a:'r',f:v=>N(mv(v)/sc(),0)},{k:'st',l:'Status',f:v=>`<span class="${stC[v]}">${v.toUpperCase()}</span>`}]}
+SC.ORD={title:'Order Blotter',btns:['96) Actions ▾','97) Export ▾','98) Settings'],html(){
+  const o=ORD,open=o.filter(x=>x.st=='Paid'||x.st=='Packing').length;
+  return`<div class="sr"><span class="am">Order blotter</span><span class="dim">Open</span><b class="wh">${open}</b><span class="dim">Shipped</span><b class="wh">${o.filter(x=>x.st=='Shipped').length}</b><span class="dim">Problems</span><b class="dn">${o.filter(x=>['Returned','Refunded','Cancelled'].includes(x.st)).length}</b><span class="dim">Value today</span><b class="up">$${N(mv(sum(o.slice(0,40),x=>x.total))/sc(),0)}</b></div><div class="sub" style="height:6px"></div>
+  <div class="body"><div class="gr" style="grid-template-columns:minmax(0,3fr) minmax(0,1fr);grid-template-rows:minmax(0,1.3fr) minmax(0,.7fr)">
+  ${pn('All orders · click a row for detail','ORD',tb('ord',[...ORDC().slice(0,7),{k:'pay',l:'Pay'},{k:'dc',l:'DC'},{k:'car',l:'Carrier'},{k:'sla',l:'SLA h',a:'r',f:v=>`<span class="${v>24?'dn':v>12?'yl':''}">${N(v)}</span>`},{k:'st',l:'Status',f:v=>`<span class="${stC[v]}">${v.toUpperCase()}</span>`}],ORD,{sort:'ts',row:'ordSel'}),'grid-row:1/3')}
+  ${pn('Order detail','OD','<div id="od">'+odHtml(ORD[0])+'</div>','')}
+  ${pn('Status mix, last 180','MIX',ch((w,h)=>bars(w,h,{labels:['Paid','Pack','Ship','Deliv','Ret','Ref','Canc'],series:[{name:'Orders',data:['Paid','Packing','Shipped','Delivered','Returned','Refunded','Cancelled'].map(s=>ORD.filter(x=>x.st==s).length)}]})),'',{fx:1})}
+  </div></div>`}};
+function odHtml(r){const its=[0,1,2].slice(0,Math.min(3,r.items)).map(k=>PR[(r.items*3+k*7)%PR.length]);
+  return kv([['Order',`<span class="am">${r.id}</span>`],['Placed',hms(new Date(r.ts))],['Customer',r.cust],['Ship to',r.cc],['Channel',r.chan],['Payment',r.pay],['Status',`<span class="${stC[r.st]}">${r.st.toUpperCase()}</span>`],['Fulfilled by',r.dc+' DC'],['Carrier',r.car],['Fraud score','Low · '+ri(2,14)+'/100'],...its.map(p=>[p.name,N(mv(p.price)/sc(),0)]),['Total',`<b class="wh">${N(mv(r.total)/sc(),0)}</b>`]])}
+
+/* ----- PRD ----- */
+SC.PRD={title:'Product Analysis',btns:['96) Actions ▾','97) Export ▾','98) Settings'],html(){
+  return`<div class="sr"><span class="am">Product analysis</span><span class="dim">${PR.length} styles</span><span class="dim">Units on hand</span><b class="wh">${N(sum(PR,p=>p.tot),0)}</b><span class="dim">Avg margin</span><b class="wh">${N(sum(PR,p=>p.mg)/PR.length)}%</b></div><div class="sub" style="height:6px"></div>
+  <div class="body"><div class="gr" style="grid-template-columns:minmax(0,2.4fr) minmax(0,1fr);grid-template-rows:minmax(0,1.5fr) minmax(0,1fr)">
+  ${pn('Style table · sort by any column','PRD',tb('prd',[{k:'sku',l:'SKU',f:v=>`<span class="am">${v}</span>`},{k:'name',l:'Style'},{k:'cat',l:'Category'},{k:'price',l:'Price',a:'r',f:v=>N(mv(v)/sc(),0)},{k:'mg',l:'Margin',a:'r',f:v=>N(v)+'%'},{k:'units',l:'Units 30D',a:'r',f:v=>N(v,0)},{k:'rev',l:'Revenue',a:'r',f:v=>N(mv(v)/sc(),0)},{k:'sell',l:'Sell-thru',f:v=>bar(v)+v+'%'},{k:'ret',l:'Ret %',a:'r',f:v=>`<span class="${v>16?'dn':''}">${N(v)}</span>`},{k:'tot',l:'Stock',a:'r',f:v=>N(v,0)},{k:'cover',l:'Cover d',a:'r',f:v=>`<span class="${v<14?'dn':v>90?'yl':''}">${v}</span>`},{k:'wow',l:'WoW',a:'r',f:v=>sgn(v,1,'%')},{k:'sp',l:'14D',ns:1,f:v=>spark(56,14,v,'#ffa21f')}],PR,{sort:'rev',row:'prdSel'}),'grid-row:1/3')}
+  ${pn('Price vs sell-through','SCT',ch((w,h)=>{const pl=44,pr=10,pt=8,pb=26,X=nice(0,1200),Y=nice(20,95),x=v=>pl+v/X.hi*(w-pl-pr),y=v=>pt+(h-pt-pb)-(v-Y.lo)/(Y.hi-Y.lo)*(h-pt-pb);let s=`<svg width="${w}" height="${h}">`;Y.t.forEach(v=>s+=`<line x1="${pl}" x2="${w-pr}" y1="${y(v)}" y2="${y(v)}" stroke="#222"/><text x="${pl-5}" y="${y(v)+3}" text-anchor="end">${v}%</text>`);X.t.forEach(v=>s+=`<text x="${x(v)}" y="${h-12}" text-anchor="middle">$${v}</text>`);PR.forEach(p=>s+=`<circle cx="${x(p.price)}" cy="${y(p.sell)}" r="${3+p.units/260}" fill="${COL[p.ci%6]}" fill-opacity=".7" stroke="#000" data-tip="${esc(`<b>${p.name}</b><br>Price $${p.price}<br>Sell-through ${p.sell}%<br>Units ${p.units}`)}"/>`);return s+'</svg>'}),'',{fx:1})}
+  ${pn('Margin by category','MG',ch((w,h)=>bars(w,h,{labels:CAT.map(c=>c.slice(0,7)),series:[{name:'Margin %',data:CAT.map((_,i)=>{const a=PR.filter(p=>p.ci==i);return+(sum(a,p=>p.mg)/a.length).toFixed(1)})}],fmt:v=>N(v)+'%',yf:v=>v+'%'})),'',{fx:1})}
+  </div></div>`}};
+
+/* ----- INV ----- */
+SC.INV={title:'Inventory',btns:['96) Actions ▾','97) Export ▾','98) Settings'],html(){
+  const re=PR.filter(p=>p.cover<30||p.stock.includes(0)).map(p=>({...p,sug:Math.max(120,Math.round(p.units/30*45-p.tot))})).slice(0,14);
+  const inb=[['PO-2291','Porto Knit','1,240','11/19'],['PO-2287','Sialkot Works','860','11/22'],['PO-2301','Prato Mill','5,400 m','11/24'],['PO-2296','Karachi Atelier','2,100','11/27'],['PO-2308','Bursa Tailoring','970','12/02'],['PO-2312','Tiruppur Cotton','3,300','12/05'],['PO-2315','Marrakech Leather','640','12/09']];
+  const cell=v=>`<span style="display:block;text-align:center;background:${v<=4?'repeating-linear-gradient(135deg,#7a1b16 0 2px,#2a0a08 2px 4px)':`rgba(255,162,31,${(.06+v/64*.7).toFixed(2)})`};color:${v/64>.5?'#000':'#fff'}">${v}</span>`;
+  return`<div class="sr"><span class="am">Inventory</span><span class="dim">Units</span><b class="wh">${N(sum(PR,p=>p.tot),0)}</b><span class="dim">Cost value</span><b class="wh">$${N(mv(sum(PR,p=>p.tot*p.cost))/sc()/1000,0)}K</b><span class="dim">Styles with a size at 0</span><b class="dn">${PR.filter(p=>p.stock.includes(0)).length}</b><span class="dim">Hatched cells = 4 or fewer</span></div><div class="sub" style="height:6px"></div>
+  <div class="body"><div class="gr" style="grid-template-columns:minmax(0,2.2fr) minmax(0,1fr);grid-template-rows:minmax(0,1.25fr) minmax(0,1fr)">
+  ${pn('Size run by style','INV',tb('inv',[{k:'sku',l:'SKU',f:v=>`<span class="am">${v}</span>`},{k:'name',l:'Style'},...SZ.map((s,i)=>({k:'s'+i,l:s,a:'c',f:(_,r)=>cell(r.stock[i])})),{k:'tot',l:'Total',a:'r',f:v=>N(v,0)},{k:'cover',l:'Cover d',a:'r',f:v=>`<span class="${v<14?'dn':v>90?'yl':''}">${v}</span>`},...DCS.map((d,i)=>({k:'d'+i,l:d.slice(0,4),a:'r',f:(_,r)=>N(r.tot*r.dc[i]/sum(r.dc),0)}))],PR,{sort:'cover',dir:1}),'grid-row:1/2')}
+  ${pn('Location capacity','DC',ch((w,h)=>bars(w,h,{labels:DCS,series:[{name:'Used %',data:[84,71,66,58]},{name:'Free %',c:'#333',data:[16,29,34,42]}],stacked:1,fmt:v=>v+'%',yf:v=>v+'%'})),'',{fx:1})}
+  ${pn('Reorder suggestions','PO',tb('re',[{k:'name',l:'Style'},{k:'tot',l:'On hand',a:'r'},{k:'cover',l:'Cover d',a:'r'},{k:'sug',l:'Suggest',a:'r',f:v=>`<b class="am" style="font-weight:400">${N(v,0)}</b>`}],re,{sort:'cover',dir:1}),'')}
+  ${pn('Inbound shipments','IN',`<table class="dt"><thead><tr><th>PO</th><th>Supplier</th><th class="r">Qty</th><th class="r">ETA</th></tr></thead><tbody>${inb.map(r=>`<tr><td class="am">${r[0]}</td><td>${r[1]}</td><td class="r">${r[2]}</td><td class="r">${r[3]}</td></tr>`).join('')}</tbody></table>`,'')}
+  </div></div>`}};
+
+/* ----- CUS ----- */
+SC.CUS={title:'Customers',btns:['96) Actions ▾','97) Export ▾','98) Settings'],html(){
+  const seg=[['ATELIER',3200,8420],['LOYAL',11800,2980],['MEMBER',24100,640],['NEW',18300,168],['AT RISK',6900,1150]].map((s,i)=>({n:s[0],c:s[1],l:s[2],sh:s[1]*s[2]}));const tot=sum(seg,s=>s.sh);
+  const coh=Array.from({length:9},(_,i)=>Array.from({length:9},(_,j)=>j>8-i?null:j==0?100:Math.round(100*Math.pow(.64,j*.55)*(.9+.2*hh(i,j))*(1+i*.01))));
+  return`<div class="sr"><span class="am">Customers</span><span class="dim">Total</span><b class="wh">64,300</b><span class="dim">Repeat rate</span><b class="up">41.8%</b><span class="dim">NPS</span><b class="wh">62</b><span class="dim">Avg LTV</span><b class="wh">$${N(mv(1180)/sc(),0)}</b></div><div class="sub" style="height:6px"></div>
+  <div class="body"><div class="gr" style="grid-template-columns:minmax(0,1fr) minmax(0,1.1fr) minmax(0,1.5fr);grid-template-rows:minmax(0,1fr) minmax(0,1fr)">
+  ${pn('Segments','SEG',tb('seg',[{k:'n',l:'Segment'},{k:'c',l:'Customers',a:'r',f:v=>N(v,0)},{k:'l',l:'Avg LTV',a:'r',f:v=>N(mv(v)/sc(),0)},{k:'sh',l:'Revenue share',f:v=>bar(v/tot*100,60)+N(v/tot*100)+'%'}],seg),'')}
+  ${pn('Cohort retention, % reordering','COH',heat(['Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov'],['M0','M1','M2','M3','M4','M5','M6','M7','M8'],coh,{lw:'34px',show:1,fmt:v=>v}),'')}
+  ${pn('Top customers by lifetime value','TOP',tb('cu',[{k:'name',l:'Customer'},{k:'tier',l:'Tier',f:v=>`<span class="${v=='ATELIER'?'am':v=='LOYAL'?'up':v=='NEW'?'cy':''}">${v}</span>`},{k:'cc',l:'Ctry'},{k:'o',l:'Orders',a:'r'},{k:'aov',l:'AOV',a:'r',f:v=>N(mv(v)/sc(),0)},{k:'ltv',l:'LTV',a:'r',f:v=>N(mv(v)/sc(),0)},{k:'last',l:'Days',a:'r'},{k:'risk',l:'Churn',f:v=>bar(v)+v+'%'}],CUST,{sort:'ltv'}),'grid-row:1/3')}
+  ${pn('LTV distribution','LTV',ch((w,h)=>bars(w,h,{labels:['<250','500','1K','2K','4K','8K','8K+'],series:[{name:'Customers',data:[9400,11800,10100,6700,3900,1600,520]}]})),'',{fx:1})}
+  ${pn('Recency vs orders','RFM',ch((w,h)=>{const pl=40,pr=10,pt=8,pb=24,X=nice(0,270),Y=nice(0,40),x=v=>pl+v/X.hi*(w-pl-pr),y=v=>pt+(h-pt-pb)-v/Y.hi*(h-pt-pb);let s=`<svg width="${w}" height="${h}">`;Y.t.forEach(v=>s+=`<line x1="${pl}" x2="${w-pr}" y1="${y(v)}" y2="${y(v)}" stroke="#222"/><text x="${pl-5}" y="${y(v)+3}" text-anchor="end">${v}</text>`);X.t.forEach(v=>s+=`<text x="${x(v)}" y="${h-10}" text-anchor="middle">${v}d</text>`);CUST.forEach(c=>s+=`<circle cx="${x(c.last)}" cy="${y(c.o)}" r="${2+c.ltv/2400}" fill="${c.tier=='ATELIER'?'#ffa21f':'#42c6ff'}" fill-opacity=".75" data-tip="${esc(`<b>${c.name}</b><br>${c.o} orders · ${c.last} days ago`)}"/>`);return s+'</svg>'}),'',{fx:1})}
+  </div></div>`}};
+
+/* ----- MKT ----- */
+SC.MKT={title:'Marketing',btns:['96) Actions ▾','97) Export ▾','98) Settings'],html(){
+  const w=Array.from({length:12},(_,i)=>'W'+(46-11+i)),sp=w.map((_,i)=>Math.round(40+hh(i,1)*18+i*1.5)*1000),rv=sp.map((v,i)=>Math.round(v*(3.6+hh(i,2)*1.4)));
+  return`<div class="sr"><span class="am">Marketing</span><span class="dim">Blended ROAS</span><b class="up">4.6x</b><span class="dim">CAC</span><b class="wh">$48</b><span class="dim">Email share</span><b class="wh">19.2%</b><span class="dim">New customers</span><b class="wh">37.5%</b></div><div class="sub" style="height:6px"></div>
+  <div class="body"><div class="gr" style="grid-template-columns:minmax(0,2fr) minmax(0,1fr);grid-template-rows:minmax(0,1.2fr) minmax(0,1fr)">
+  ${pn('Campaigns','CMP',tb('cmp',[{k:'name',l:'Campaign'},{k:'ch',l:'Channel'},{k:'spend',l:'Spend',a:'r',f:v=>N(mv(v)/sc(),0)},{k:'rev',l:'Revenue',a:'r',f:v=>N(mv(v)/sc(),0)},{k:'roas',l:'ROAS',a:'r',f:v=>`<span class="${v>=3?'up':'dn'}">${N(v)}x</span>`},{k:'cac',l:'CAC',a:'r'},{k:'ctr',l:'CTR',a:'r',f:v=>N(v,2)+'%'},{k:'cvr',l:'CVR',a:'r',f:v=>N(v,2)+'%'},{k:'st',l:'Status',f:v=>`<span class="${v=='LIVE'?'up':v=='SCHED'?'cy':'dim'}">${v}</span>`}],CAMP,{sort:'rev'}),'grid-row:1/2')}
+  ${pn('Attribution','ATT',tb('att',[{k:'n',l:'Source'},{k:'v',l:'Share',f:v=>bar(v,40)+v+'%'},{k:'c',l:'Orders',a:'r',f:v=>N(v,0)}],[['Paid social',34,4210],['Search',27,3340],['Email',19,2350],['Organic',12,1480],['Creators',8,990]].map(r=>({n:r[0],v:r[1],c:r[2]})),{}),'')}
+  ${pn('Spend and attributed revenue, 12 weeks','SPD',ch((W,h)=>bars(W,h,{labels:w,series:[{name:'Spend',data:sp.map(v=>mv(v)/sc())},{name:'Revenue',c:'#42c6ff',data:rv.map(v=>mv(v)/sc())}]})),'',{fx:1})}
+  ${pn('ROAS trend','ROA',ch((W,h)=>line(W,h,{labels:w,series:[{name:'ROAS',data:rv.map((v,i)=>v/sp[i]),area:1},{name:'Target',c:'#ff4b43',dash:1,data:w.map(()=>3)}],fmt:v=>N(v,2)+'x',yf:v=>N(v,1)+'x',zero:false})),'',{fx:1})}
+  </div></div>`}};
+
+/* ----- RTL ----- */
+SC.RTL={title:'Retail Stores',btns:['96) Actions ▾','97) Export ▾','98) Settings'],html(){
+  const hrs=Array.from({length:12},(_,i)=>pad(i+9)),wd=hrs.map((_,i)=>Math.round(40+190*Math.exp(-Math.pow((i-7.5)/2.6,2))+hh(i,2)*12)),we=hrs.map((_,i)=>Math.round(70+300*Math.exp(-Math.pow((i-5)/3,2))+hh(i,5)*16));
+  return`<div class="sr"><span class="am">Retail stores</span><span class="dim">Stores</span><b class="wh">${STORES.length}</b><span class="dim">Footfall 30D</span><b class="wh">${N(sum(STORES,s=>s.foot),0)}</b><span class="dim">Avg conversion</span><b class="wh">${N(sum(STORES,s=>s.conv)/STORES.length)}%</b></div><div class="sub" style="height:6px"></div>
+  <div class="body"><div class="gr" style="grid-template-columns:minmax(0,2.2fr) minmax(0,1fr);grid-template-rows:minmax(0,1.3fr) minmax(0,1fr)">
+  ${pn('Store performance','STO',tb('sto',[{k:'name',l:'Store'},{k:'cc',l:'Ctry'},{k:'rev',l:'Revenue 30D',a:'r',f:v=>N(mv(v)/sc(),0)},{k:'psm',l:'$/sqm',a:'r',f:v=>N(mv(v)/sc(),0)},{k:'foot',l:'Footfall',a:'r',f:v=>N(v,0)},{k:'conv',l:'Conv',f:v=>bar(v,30)+N(v)+'%'},{k:'upt',l:'UPT',a:'r',f:v=>N(v)},{k:'yoy',l:'YoY',a:'r',f:v=>sgn(v,1,'%')},{k:'sp',l:'12M',ns:1,f:v=>spark(54,14,v,'#42c6ff')},{k:'stf',l:'Status',f:v=>`<span class="${v=='OPEN'?'up':'yl'}">${v}</span>`}],STORES,{sort:'rev'}),'grid-row:1/3')}
+  ${pn('Footfall by hour','FTF',ch((w,h)=>line(w,h,{labels:hrs,series:[{name:'Weekend',data:we,area:1},{name:'Weekday',c:'#9a9a9a',dash:1,data:wd}]})),'',{fx:1})}
+  ${pn('Revenue by store, $K','REV',ch((w,h)=>bars(w,h,{labels:STORES.map(s=>s.name.split(' · ')[0].slice(0,5)),series:[{name:'Revenue',data:STORES.map(s=>mv(s.rev)/1000)}],fmt:v=>'$'+N(v,1)+'K'})),'',{fx:1})}
+  </div></div>`}};
+
+/* ----- RET ----- */
+SC.RET={title:'Returns and Support',btns:['96) Actions ▾','97) Export ▾','98) Settings'],html(){
+  const why=[['Size too small',31],['Size too large',27],['Not as pictured',14],['Changed mind',13],['Quality issue',9],['Arrived late',6]],mo=['Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov'],cs=mo.map((_,i)=>+(4.35+i*.025+hh(i,2)*.1).toFixed(2));
+  return`<div class="sr"><span class="am">Returns and support</span><span class="dim">Return rate</span><b class="up">13.8%</b><span class="dim">First response</span><b class="wh">1h 42m</b><span class="dim">Rating</span><b class="wh">${cs[11]}</b><span class="dim">Open tickets</span><b class="am">61</b></div><div class="sub" style="height:6px"></div>
+  <div class="body"><div class="gr" style="grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1.2fr) minmax(0,1fr)">
+  ${pn('Support queue','TIX',tb('tix',[{k:'id',l:'Ticket',f:v=>`<span class="am">${v}</span>`},{k:'sub',l:'Subject'},{k:'cust',l:'Customer'},{k:'pri',l:'Pri',f:v=>`<span class="${v=='HIGH'?'dn':v=='NORM'?'':'dim'}">${v}</span>`},{k:'age',l:'Wait h',a:'r',f:v=>`<span class="${v>24?'dn':v>12?'yl':''}">${v}</span>`},{k:'agent',l:'Agent'},{k:'st',l:'Status',f:v=>`<span class="${v=='SOLVED'?'up':v=='WAIT'?'cy':'am'}">${v}</span>`}],TIX,{sort:'age'}),'grid-row:1/3')}
+  ${pn('Why items come back, %','RSN',ch((w,h)=>bars(w,h,{labels:why.map(r=>r[0].split(' ').slice(0,2).join(' ').slice(0,9)),series:[{name:'Share',data:why.map(r=>r[1])}],fmt:v=>v+'%',yf:v=>v+'%'})),'grid-column:2/4',{fx:1})}
+  ${pn('Return rate by size','SZ',ch((w,h)=>bars(w,h,{labels:SZ,series:[{name:'Return rate',data:[19.4,14.8,11.2,13.6,18.1]}],fmt:v=>v+'%',yf:v=>v+'%'})),'',{fx:1})}
+  ${pn('Customer rating, 12 months','CSAT',ch((w,h)=>line(w,h,{labels:mo,series:[{name:'Rating',data:cs,area:1}],zero:false,fmt:v=>N(v,2),yf:v=>N(v,1)})),'',{fx:1})}
+  </div></div>`}};
+
+/* ----- PRO ----- */
+SC.PRO={title:'Production',btns:['96) Actions ▾','97) Export ▾','98) Settings'],html(){
+  const stg=['Design','Sampling','Fabric sourced','Cutting','Sewing','Quality check','Shipped'],cnts=stg.map((_,i)=>({n:stg[i],s:ri(3,9),u:ri(14,60)*100}));
+  const po=Array.from({length:14},(_,i)=>({id:'PO-'+(2315-i*3),f:FACT[i%8].name,st:pick(PR).name,u:ri(5,40)*50,due:ri(2,40),stg:pick(stg)}));
+  const mo=['Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov'],mat=['Wool','Cotton','Leather'].map((n,k)=>({name:n,data:mo.map((_,i)=>Math.round(100+(k==0?i*1.8:k==1?-i*.6:i*.9)+hh(i,k)*5))}));
+  return`<div class="sr"><span class="am">Production</span><span class="dim">Styles in pipeline</span><b class="wh">${sum(cnts,c=>c.s)}</b><span class="dim">Units</span><b class="wh">${N(sum(cnts,c=>c.u),0)}</b><span class="dim">Late POs</span><b class="dn">3</b></div><div class="sub" style="height:6px"></div>
+  <div class="body"><div class="gr" style="grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:minmax(0,1fr) minmax(0,1fr)">
+  ${pn('Pipeline by stage','PIP',ch((w,h)=>bars(w,h,{labels:stg.map(s=>s.split(' ')[0]),series:[{name:'Units',data:cnts.map(c=>c.u)}]})),'grid-column:span 4',{fx:1})}
+  ${pn('Factory scorecard','FAC',tb('fac',[{k:'name',l:'Factory'},{k:'make',l:'Makes'},{k:'ot',l:'On time',f:v=>bar(v)+N(v)+'%'},{k:'def',l:'Defects',a:'r',f:v=>`<span class="${v>1.5?'dn':''}">${N(v)}%</span>`},{k:'lead',l:'Lead d',a:'r'},{k:'cap',l:'Capacity',f:v=>bar(v)+v+'%'},{k:'po',l:'Open POs',a:'r'}],FACT,{sort:'ot'}),'grid-column:span 8')}
+  ${pn('Purchase orders','PO',tb('po',[{k:'id',l:'PO',f:v=>`<span class="am">${v}</span>`},{k:'f',l:'Factory'},{k:'st',l:'Style'},{k:'u',l:'Units',a:'r',f:v=>N(v,0)},{k:'stg',l:'Stage'},{k:'due',l:'Due in',a:'r',f:v=>v+'d'}],po,{sort:'due',dir:1}),'grid-column:span 6')}
+  ${pn('Material cost index, Nov last year = 100','MAT',ch((w,h)=>line(w,h,{labels:mo,series:mat,zero:false})),'grid-column:span 6',{fx:1})}
+  </div></div>`}};
+
+/* ========== shell ========== */
+const IC={msg:'<svg viewBox="0 0 24 24"><path d="M3 6h18v12H3zM3 7l9 7 9-7"/></svg>',star:'<svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>',win:'<svg viewBox="0 0 24 24"><path d="M4 5h16v10H4zM9 19h6M12 15v4"/></svg>',gear:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg>'};
+function buildBar1(){
+  $('#bar1').innerHTML=`<button class="nv" data-nav="-1" aria-label="Back">&lt;</button><button class="nv" data-nav="1" aria-label="Forward">&gt;</button>
+  <div class="fld sec"><span>${st.ent}</span><button data-m="ent" aria-label="Entity">▾</button></div>
+  <div class="fld fn"><input id="fn" value="${st.fn}" maxlength="6" autocomplete="off" spellcheck="false" aria-label="Function"><button data-m="fn" aria-label="Functions">▾</button></div>
+  <div class="fld rel hide-s"><span>Related Functions Menu</span><button data-m="rel" aria-label="Related">≫</button></div><div class="sp"></div>
+  <button class="hb hide-s" data-ov="msg">${IC.msg}Message</button><button class="hb" data-star>${IC.star}</button><button class="hb hide-s" data-toast="New window opened in the workspace">${IC.win}</button><button class="hb" data-ov="set">${IC.gear}</button><button class="qb" data-ov="help" aria-label="Help">?</button>`;
+  $('#bar1 [data-star] svg').style.fill=st.star?'#ffa21f':'none'}
+const TK={px:262.46,chg:-1.91,o:258.115,h:264.5,l:256.35,ord:1284,sess:30703,gmv:4.272e6,hist:Array.from({length:40},(_,i)=>258+Math.sin(i/5)*3+hh(i,1)*3)};
+function drawTick(){
+  const up=TK.chg>=0,cl=up?'up':'dn';
+  $('#tick1').innerHTML=`<i class="cur"></i><span class="tk">NL OPS</span><span class="dim">$</span><span class="${cl}">${up?'↑':'↓'}</span><span class="${cl}">${N(TK.px,2)}</span><span class="${cl}">${up?'':''}${N(TK.chg,2)}</span><span class="hide-s">${spark(150,28,TK.hist,'#ececec')}</span><span class="ba hide-s">N${N(TK.px-.08,2)} / ${N(TK.px-.07,2)}N</span><span class="qs hide-s">20×223</span>`;
+  $('#tick2').innerHTML=`<span class="gl">◔</span><span>At ${hm(new Date())} d</span><span>Ord <b>${N(TK.ord,0)}</b></span><span class="hide-s">Sess <b>${N(TK.sess,0)}</b></span><span>O <span class="l">${N(TK.o,3)}D</span></span><span>H <span class="l">${N(TK.h,2)}K</span></span><span>L <span class="l">${N(TK.l,2)}K</span></span><span>Val <b>${N(TK.gmv/1e6,3)}M</b></span>`}
+function drawNews(){
+  const big=$('#news').classList.contains('big'),n=NEWS.slice(0,big?16:4);
+  $('#news').innerHTML=`<div class="hd"><button data-toast="Panel editor opens in the next release">300) Edit Panel</button><button data-bigtoggle>301) ${big?'Collapse':'Expand'} Panel</button></div><div id="nl">${n.map(x=>`<div><span class="s">${x.s}</span><span class="m">${hm(new Date(x.t))}</span><span class="x">${x.x}</span></div>`).join('')}</div>`}
+function render(keepScroll){
+  CH.length=0;TBS={};closeMenus();
+  const s=SC[st.fn];
+  buildBar1();
+  const idt=ENT[st.ent].id;
+  $('#bar2').innerHTML=`<span class="id">${idt}</span>${s.btns.map((b,i)=>`<button data-b="${b}">${b.replace(' ▾','')}${b.includes('▾')?'<i>▼</i>':''}</button>`).join('')}<span class="ttl">${s.title}</span>`;
+  $('#main').innerHTML=s.html();
+  document.title=st.fn+' · NULLA Terminal';
+  requestAnimationFrame(()=>{paint();Object.keys(TBS).forEach(drawTb);if(s.after)s.after()});
+}
+function go(fn,push=true){fn=fn.toUpperCase();if(!SC[fn]){flashErr();return}
+  if(push&&fn!==st.fn){st.hist=st.hist.slice(0,st.hi+1);st.hist.push(fn);st.hi=st.hist.length-1}
+  st.fn=fn;render();}
+function flashErr(){toast('Invalid function. Try FA, DES, RSK, ORD, PRD, INV, CUS, MKT, RTL, RET, PRO or MON');const f=$('#fn');if(f)f.value=st.fn}
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2600)}
+function closeMenus(){$('#mn').classList.remove('on')}
+function menu(el,items){const m=$('#mn'),r=el.getBoundingClientRect();m._it=items;m.innerHTML=items.map((it,i)=>`<button data-mi="${i}">${it[0]}</button>`).join('');m.style.left=Math.max(4,Math.min(r.left,innerWidth-250))+'px';m.style.top=r.bottom+2+'px';m.classList.add('on')}
+function overlay(t,html){const o=$('#ovl');o.innerHTML=`<h3><span>${t}</span><button data-closeov>✕</button></h3><div class="in">${html}</div>`;o.classList.add('on')}
+function popChart(id){const rows=rowsFor(st.tab===9?1:st.tab,st.sub),all=allRows(),r=(st.tab===9?all[id]:rows.find(x=>x.id===id))||all[id];if(!r||!r.f)return;
+  const P=periods(),vals=P.map(p=>{const v=r.f(calc(p),p);return v==null?0:((r.fmt||'n')==='n'?mv(v):(r.fmt==='c'?v*sc():v))});
+  $('#pop').innerHTML=`<h3><span>${r.l} · ${st.kind}</span><button data-closepop>✕</button></h3><div class="pb fx">${ch((w,h)=>bars(w,h,{labels:P.map(p=>p.l.replace(' Y','')),series:[{name:r.l,data:vals}]}))}</div>`;$('#pop').classList.add('on');paint($('#pop'))}
+
+/* ========== events ========== */
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-nav],[data-m],[data-mi],[data-ov],[data-star],[data-toast],[data-ftab],[data-fsub],[data-dtab],[data-fs],[data-tg],[data-ic],[data-ts],[data-tr],[data-b],[data-bigtoggle],[data-closeov],[data-closepop],[data-crm]');
+  if(!t){if(!e.target.closest('#mn'))closeMenus();return}
+  const d=t.dataset;
+  if(d.mi!==undefined){const it=$('#mn')._it[+d.mi];closeMenus();it[1]();return}
+  if(d.nav){const i=st.hi+ +d.nav;if(i>=0&&i<st.hist.length){st.hi=i;go(st.hist[i],false)}return}
+  if(d.m){e.stopPropagation();const el=t.closest('.fld');
+    if(d.m==='ent')menu(el,Object.keys(ENT).map(k=>[k,()=>{st.ent=k;toast('Scope set to '+k);render()}]));
+    if(d.m==='fn')menu(el,FNS.map(f=>[f[0]+'  '+f[1],()=>go(f[0])]));
+    if(d.m==='rel')menu(el,FNS.map((f,i)=>[(i+1)+') '+f[0]+'  '+f[1],()=>go(f[0])]));return}
+  if(d.ov==='msg')overlay('Message center',['M. Rahman · Black Friday stock plan needs sign-off today','Imran K. · Karachi Atelier asks to move cut date by 2 days','Sofia L. · PO-2308 customs paperwork complete','System · Backup finished 03:00, 41 GB','Ahmed S. · Payout reconciliation ready for review'].map(m=>`<div class="rw"><span>${m}</span><span class="dim">new</span></div>`).join(''));
+  if(d.ov==='set')overlay('Settings',`<div class="rw"><span>Density</span><select data-set="cp"><option value="0" ${st.cp?'':'selected'}>Normal</option><option value="1" ${st.cp?'selected':''}>Compact</option></select></div><div class="rw"><span>Show percent columns</span><select data-set="pct"><option value="1" ${st.pct?'selected':''}>On</option><option value="0" ${st.pct?'':'selected'}>Off</option></select></div><div class="rw"><span>Currency</span><select data-set="cur">${Object.keys(CUR).map(k=>`<option ${k==st.cur?'selected':''}>${k}</option>`).join('')}</select></div>`);
+  if(d.ov==='help')overlay('Help',`<div class="rw"><span class="am">Type a code, press Enter</span><span class="dim">Command field, top left</span></div>${FNS.map(f=>`<div class="rw"><span class="am">${f[0]}</span><span>${f[1]}</span></div>`).join('')}<div class="rw"><span class="am">Esc</span><span>Close menus and panels</span></div><div class="rw"><span class="am">&lt;  &gt;</span><span>Back and forward through screens</span></div>`);
+  if(d.ov)return;
+  if(d.closeov!==undefined){$('#ovl').classList.remove('on');return}
+  if(d.closepop!==undefined){$('#pop').classList.remove('on');return}
+  if(d.star!==undefined){st.star=!st.star;buildBar1();toast(st.star?'Added to favorites':'Removed from favorites');return}
+  if(d.toast){toast(d.toast);return}
+  if(d.b){const b=d.b;if(b.includes('Actions'))menu(t,[['Save layout',()=>toast('Layout saved')],['Share screen',()=>toast('Link copied')],['Set alert',()=>toast('Alert created')],['Print',()=>toast('Sent to printer')]]);else if(b.includes('Export'))menu(t,[['Export to Excel',()=>toast('Excel export queued')],['Export to CSV',()=>toast('CSV export queued')],['Export to PDF',()=>toast('PDF export queued')]]);else if(b.includes('Settings'))document.querySelector('[data-ov="set"]').click();else toast('Report queued. You will get it by email.');return}
+  if(d.bigtoggle!==undefined){$('#news').classList.toggle('big');drawNews();return}
+  if(d.ftab){st.tab=+d.ftab;if(st.tab===6)st.sub=st.sub||11;render();return}
+  if(d.fsub){st.sub=+d.fsub;render();return}
+  if(d.dtab){st.des=+d.dtab;render();return}
+  if(d.fs){const f=$('#fa');f.scrollBy({left:+d.fs,behavior:'smooth'});return}
+  if(d.tg){st.col[d.tg]=!(st.col[d.tg]!==undefined?st.col[d.tg]:!!(rowsFor(st.tab,st.sub).find(r=>r.id===d.tg)||{}).closed);const f=$('#fa'),l=f.scrollLeft,tp=f.scrollTop;f.innerHTML=faBody();f.scrollLeft=l;f.scrollTop=tp;return}
+  if(d.ic){popChart(d.ic);return}
+  if(d.crm){st.cust=st.cust.filter(x=>x!==d.crm);render();return}
+  if(d.ts){const[id,k]=d.ts.split('|'),s=TBS[id];s.d=s.s===k?-s.d:-1;s.s=k;drawTb(id);return}
+  if(d.tr){const[id,i]=d.tr.split('|'),s=TBS[id],r=s.rows[+i];s.sel=r;drawTb(id);if(s.o.row==='ordSel'){$('#od').innerHTML=odHtml(r)}if(s.o.row==='prdSel')toast(r.name+' · '+r.sku+' · cover '+r.cover+' days')}
+});
+document.addEventListener('change',e=>{const t=e.target;
+  if(t.id==='pn'){st.n=+t.value;render()}
+  if(t.id==='pk'){st.kind=t.value;st.n=st.kind==='Annuals'?10:st.kind==='Quarterly'?12:12;render()}
+  if(t.id==='pc'){st.cur=t.value;render()}
+  if(t.id==='cadd'&&t.value){st.cust.push(t.value);render()}
+  if(t.dataset.set==='cp'){st.cp=t.value==='1';document.body.classList.toggle('cp',st.cp)}
+  if(t.dataset.set==='pct'){st.pct=t.value==='1';render()}
+  if(t.dataset.set==='cur'){st.cur=t.value;render()}
+});
+document.addEventListener('keydown',e=>{
+  const f=$('#fn');
+  if(e.key==='Escape'){closeMenus();$('#ovl').classList.remove('on');$('#pop').classList.remove('on');return}
+  if(e.target===f&&e.key==='Enter'){const v=f.value.trim().replace(/<go>/i,'').toUpperCase();go(v);return}
+  if(!e.ctrlKey&&!e.metaKey&&!e.altKey&&e.key.length===1&&/[a-zA-Z]/.test(e.key)&&!/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)){f.focus();f.select()}
+});
+document.addEventListener('focusin',e=>{if(e.target.id==='fn')e.target.select()});
+const tip=$('#tip');
+document.addEventListener('mousemove',e=>{const t=e.target.closest&&e.target.closest('[data-tip]');if(!t){tip.style.opacity=0;return}
+  tip.innerHTML=t.dataset.tip;tip.style.opacity=1;const w=tip.offsetWidth,h=tip.offsetHeight;let x=e.clientX+14,y=e.clientY+14;if(x+w>innerWidth-8)x=e.clientX-w-14;if(y+h>innerHeight-8)y=e.clientY-h-14;tip.style.left=x+'px';tip.style.top=y+'px'});
+let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>paint(),120)});
+
+/* ========== live ========== */
+setInterval(()=>{
+  const d=(R()-.47)*.9;TK.px+=d;TK.chg+=d;TK.hist.push(TK.px);TK.hist.shift();TK.h=Math.max(TK.h,TK.px);TK.l=Math.min(TK.l,TK.px);
+  if(R()<.6){TK.ord+=ri(1,3);TK.gmv+=ri(80,900);}TK.sess+=ri(2,14);drawTick();
+},1800);
+setInterval(()=>{
+  const o=mkOrder(0);ORD.unshift(o);ORD.length=Math.min(ORD.length,180);ORD.forEach(x=>{if(x.st=='Paid'&&Date.now()-x.ts>9e4)x.st='Packing'});
+  ['mord','ord'].forEach(id=>{if(TBS[id]){TBS[id].rows=ORD;drawTb(id)}});
+  if(R()<.55){const n=NEWSP[ri(0,NEWSP.length-1)];NEWS.unshift({s:n[0],t:Date.now(),x:n[1]});NEWS.length=Math.min(NEWS.length,30);drawNews()}
+},6000);
+
+buildBar1();drawTick();drawNews();render();
+</script>
+</body>
+</html>

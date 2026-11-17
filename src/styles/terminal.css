@@ -1,0 +1,1332 @@
+/* ==========================================================================
+   ZEJESH TERMINAL UI — dark Bloomberg-grade operational workspace for /admin
+   Monochrome black/amber/cyan/green, tabular numerics, zero-radius grid.
+   Strictly scoped to .t-terminal overlays & chrome; storefront untouched.
+   ========================================================================== */
+
+:root {
+  --t-bg: #000000;
+  --t-paper: #050505;
+  --t-border: #262626;
+  --t-border-strong: #4a4a4a;
+  --t-ink: #ececec;
+  --t-dim: #7a7a7a;
+  --t-dim2: #a0a0a0;
+  --t-amber: #ffa21f;
+  --t-amber-dim: #e88a00;
+  --t-up: #2fd35f;
+  --t-dn: #ff4b43;
+  --t-cy: #42c6ff;
+  --t-yl: #ffd60a;
+  --t-bl: #1a6be0;
+  --t-nb: #0a2282;
+  --t-red: #b3191f;
+  --t-radius: 0;
+  --t-h: 21px;
+  --t-font: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+
+.t-terminal {
+  background: var(--t-bg) !important;
+  color: var(--t-ink) !important;
+  font-family: var(--t-font) !important;
+  font-size: 12.5px !important;
+  line-height: 1.25 !important;
+  font-variant-numeric: tabular-nums !important;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden !important;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  color-scheme: dark;
+}
+
+.t-terminal.t-compact {
+  --t-h: 18px;
+  font-size: 11.5px !important;
+}
+
+.t-terminal * {
+  box-sizing: border-box;
+}
+
+.t-terminal button,
+.t-terminal input,
+.t-terminal select,
+.t-terminal textarea {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  outline: 0;
+  text-transform: none;
+}
+
+.t-terminal button {
+  cursor: pointer;
+}
+
+.t-terminal :focus-visible {
+  outline: 1px solid var(--t-amber);
+}
+
+.t-terminal svg {
+  display: block;
+}
+
+.t-terminal svg text {
+  font: 10.5px var(--t-font), monospace;
+  fill: #8f8f8f;
+}
+
+/* Custom dark terminal scrollbars */
+.t-terminal ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.t-terminal ::-webkit-scrollbar-track {
+  background: #050505;
+}
+.t-terminal ::-webkit-scrollbar-thumb {
+  background: #2f2f2f;
+}
+.t-terminal ::-webkit-scrollbar-thumb:hover {
+  background: var(--t-amber);
+}
+
+/* Semantic color utilities (both .t-* and direct inside .t-terminal) */
+.t-terminal .t-dim,
+.t-terminal .dim { color: var(--t-dim); }
+.t-terminal .t-dim2,
+.t-terminal .dim2 { color: var(--t-dim2); }
+.t-terminal .t-up,
+.t-terminal .up { color: var(--t-up); }
+.t-terminal .t-dn,
+.t-terminal .dn { color: var(--t-dn); }
+.t-terminal .t-am,
+.t-terminal .am { color: var(--t-amber); }
+.t-terminal .t-cy,
+.t-terminal .cy { color: var(--t-cy); }
+.t-terminal .t-yl,
+.t-terminal .yl { color: var(--t-yl); }
+.t-terminal .t-bl,
+.t-terminal .bl { color: var(--t-bl); }
+.t-terminal .t-rd,
+.t-terminal .rd { color: var(--t-red); }
+.t-terminal .t-wh,
+.t-terminal .wh { color: #ffffff; }
+
+/* Shell grid */
+.t-app {
+  display: grid;
+  grid-template-rows: auto auto auto auto minmax(0, 1fr) auto;
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.t-bar1 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: #000000;
+  border-bottom: 1px solid #1a1a1a;
+  position: relative;
+  z-index: 30;
+  font-size: 13px;
+  min-height: 36px;
+}
+
+.t-bar1 .t-navbtn {
+  font-size: 16px;
+  line-height: 1;
+  padding: 2px 7px;
+  color: #d8d8d8;
+  border: 1px solid #262626;
+  background: #0d0d0d;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.t-bar1 .t-navbtn:hover:not(:disabled) {
+  color: var(--t-amber);
+  border-color: var(--t-amber);
+}
+.t-bar1 .t-navbtn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.t-fld {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #1c1c1c;
+  border: 1px solid #444444;
+  border-bottom-color: #7a7a7a;
+  padding: 2px 10px;
+  font-size: 13px;
+  height: 28px;
+}
+
+.t-fld input {
+  width: 112px;
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: var(--t-amber);
+  letter-spacing: 0.04em;
+}
+.t-fld input::placeholder {
+  color: #666;
+}
+
+.t-fld.sec {
+  min-width: 210px;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  color: var(--t-cy);
+}
+.t-fld.fn {
+  flex: 0 0 auto;
+}
+.t-fld.rel {
+  flex: 0 0 auto;
+  color: #d0d0d0;
+}
+.t-fld b {
+  font-weight: 500;
+  color: #cfcfcf;
+  font-size: 11px;
+}
+
+.t-sp {
+  flex: 1;
+}
+
+.t-hb {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #d8d8d8;
+  padding: 0 8px;
+  height: 28px;
+  font-size: 12px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.t-hb:hover {
+  color: var(--t-amber);
+  border-color: #333;
+  background: #111;
+}
+.t-hb.active {
+  color: var(--t-amber);
+  border-color: var(--t-amber);
+  background: #171000;
+}
+.t-hb svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  flex: none;
+}
+
+.t-badge-num {
+  background: var(--t-amber);
+  color: #000;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 0 4px;
+  line-height: 14px;
+}
+
+.t-qb {
+  background: var(--t-yl);
+  color: #000;
+  font-weight: 600;
+  width: 34px;
+  height: 28px;
+  font-size: 14px;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.t-qb:hover {
+  background: #ffe44d;
+}
+
+/* Tickers */
+.t-tick1 {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 3px 10px 2px 6px;
+  font-size: 20px;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  background: #000;
+}
+
+.t-tick1 .t-cur {
+  width: 14px;
+  height: 22px;
+  background: var(--t-cy);
+  flex: none;
+}
+.t-tick1 .t-tk {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #fff;
+}
+.t-tick1 .t-ba,
+.t-tick1 .t-qs {
+  font-size: 15px;
+  color: #c8c8c8;
+}
+.t-tick1 svg {
+  align-self: center;
+}
+
+.t-tick2 {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 2px 10px 4px;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  background: #000;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.t-tick2 .t-gl {
+  width: 22px;
+  height: 22px;
+  background: var(--t-amber);
+  color: #000;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  flex: none;
+}
+.t-tick2 b {
+  font-weight: 500;
+  color: var(--t-amber);
+}
+.t-tick2 .t-l {
+  color: var(--t-amber);
+}
+
+/* Red Action Bar */
+.t-bar2 {
+  display: flex;
+  align-items: stretch;
+  height: 26px;
+  font-size: 13px;
+  border-bottom: 1px solid #000;
+}
+
+.t-bar2 .t-id {
+  background: var(--t-amber);
+  color: #000;
+  font-weight: 600;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  min-width: 210px;
+  letter-spacing: 0.04em;
+}
+
+.t-bar2 button {
+  background: #9c1a1f;
+  padding: 0 14px;
+  color: #fff;
+  border-left: 1px solid #000;
+  white-space: nowrap;
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
+.t-bar2 button:hover {
+  background: #c0252c;
+}
+.t-bar2 button i {
+  font-style: normal;
+  font-size: 9px;
+  margin-left: 6px;
+}
+
+.t-bar2 .t-ttl {
+  flex: 1;
+  background: var(--t-red);
+  text-align: right;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  color: #fff;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Main Workspace */
+.t-main {
+  min-height: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #000;
+  position: relative;
+}
+
+.t-workspace-split {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+.t-stage {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Screen status / controls bar */
+.t-sr {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 4px 10px;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex: none;
+  min-height: 29px;
+  background: #070707;
+  border-bottom: 1px solid #1b1b1b;
+}
+
+.t-sr .t-adj {
+  background: #303030;
+  border: 1px solid #555;
+  color: #fff;
+  font-weight: 600;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+.t-sr .t-qm {
+  background: #fff;
+  color: #000;
+  font-style: normal;
+  font-weight: 700;
+  padding: 0 5px;
+  margin-left: 4px;
+}
+
+.t-ob {
+  background: var(--t-amber);
+  color: #000;
+  padding: 0 10px;
+  height: 22px;
+  appearance: none;
+  cursor: pointer;
+  border: 1px solid #5a3a00;
+  font-size: 12.5px;
+  font-weight: 500;
+  font-family: inherit;
+}
+
+.t-ob.w {
+  min-width: 150px;
+}
+.t-ob option {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+/* Trapezoid tabs */
+.t-tabs {
+  display: flex;
+  flex: none;
+  background: #0d0d0d;
+  padding: 3px 4px 0;
+  overflow-x: auto;
+}
+
+.t-tabs button {
+  padding: 3px 20px 3px 12px;
+  margin-right: 2px;
+  color: #b0b0b0;
+  background: #242424;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 100%, 0 100%);
+  font-size: 12.5px;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.t-tabs button.on {
+  background: #c2c2c2;
+  color: #000000;
+  font-weight: 600;
+}
+.t-tabs button:hover:not(.on) {
+  color: #fff;
+  background: #333;
+}
+
+/* Sub-ribbon tabs */
+.t-sub {
+  display: flex;
+  background: #c2c2c2;
+  flex: none;
+  padding: 0;
+  overflow-x: auto;
+}
+
+.t-sub button {
+  padding: 3px 16px;
+  color: #333333;
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  font-family: inherit;
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.t-sub button:hover:not(.on) {
+  background: #d4d4d4;
+  color: #000;
+}
+
+.t-sub button.on {
+  background: var(--t-bl);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.t-body {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+  background: #000000;
+}
+
+/* Embedded 18 legacy CRUD & Control views wrapper inside Terminal */
+.t-legacy-wrap {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #000000;
+  padding: 16px 20px 44px;
+}
+
+/* Left Quick-Navigator Rail (19 screens) */
+.t-nav {
+  width: 214px;
+  flex: none;
+  border-right: 1px solid var(--t-border);
+  background: #040404;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.t-nav.collapsed {
+  display: none;
+}
+
+.t-nav .t-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 10px;
+  background: #0d0d0d;
+  border-bottom: 1px solid var(--t-border);
+  flex: none;
+  height: 29px;
+}
+
+.t-nav .t-ng {
+  border-bottom: 1px solid #161616;
+  padding: 4px 0;
+}
+.t-nav .t-ng small {
+  display: block;
+  padding: 3px 10px 4px;
+  font-size: 10px;
+  color: var(--t-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.t-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  text-align: left;
+  padding: 4px 10px;
+  color: #b8b8b8;
+  background: transparent;
+  white-space: nowrap;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  border: 0;
+}
+.t-nav-item:hover {
+  background: #141414;
+  color: #ffffff;
+}
+.t-nav-item.on {
+  background: var(--t-amber);
+  color: #000000;
+  font-weight: 600;
+}
+.t-nav-item .t-nav-code {
+  font-size: 10px;
+  color: var(--t-amber);
+  min-width: 26px;
+}
+.t-nav-item.on .t-nav-code {
+  color: #000000;
+}
+.t-nav-item .t-nav-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.t-nav-item em {
+  margin-left: auto;
+  font-style: normal;
+  font-size: 10px;
+  color: #000;
+  background: #d8d8d8;
+  padding: 0 5px;
+  line-height: 15px;
+}
+.t-nav-item.on em {
+  background: #000000;
+  color: var(--t-amber);
+}
+
+/* FA General Ledger table */
+.t-fa {
+  position: absolute;
+  inset: 0;
+  bottom: 30px;
+  overflow: auto;
+  background: #000000;
+}
+
+.t-fa table {
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+}
+
+.t-fa th {
+  background: #222222;
+  font-weight: 500;
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  white-space: nowrap;
+  padding: 2px 8px;
+  height: var(--t-h);
+  border-right: 1px solid #3c3c3c;
+  color: #e6e6e6;
+}
+
+.t-fa tr.h2 th {
+  top: var(--t-h);
+  background: #0d0d0d;
+  border-bottom: 1px solid #4a4a4a;
+  border-top: 1px solid #4a4a4a;
+  color: #9a9a9a;
+  font-weight: 400;
+}
+.t-fa th.c1 {
+  left: 0;
+  z-index: 5;
+  text-align: left;
+  border-right: 0;
+}
+.t-fa th.c2 {
+  left: 30px;
+  z-index: 5;
+  text-align: left;
+  min-width: 310px;
+}
+.t-fa td {
+  height: var(--t-h);
+  padding: 0 8px;
+  white-space: nowrap;
+  text-align: right;
+  border-bottom: 1px solid #101010;
+}
+.t-fa td.t-v,
+.t-fa td.v {
+  min-width: 110px;
+  border-left: 1px solid #333333;
+  padding-right: 6px;
+}
+.t-fa td.t-pc,
+.t-fa td.pc {
+  min-width: 68px;
+  padding-right: 6px;
+  color: #b5b5b5;
+}
+.t-fa td.t-ic,
+.t-fa td.ic {
+  position: sticky;
+  left: 0;
+  background: #141414;
+  z-index: 2;
+  width: 30px;
+  min-width: 30px;
+  text-align: center;
+  padding: 0;
+}
+.t-fa td.t-lb,
+.t-fa td.lb {
+  position: sticky;
+  left: 30px;
+  background: #141414;
+  z-index: 2;
+  text-align: left;
+  min-width: 310px;
+  max-width: 360px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-right: 1px solid #3c3c3c;
+  color: #e6e6e6;
+}
+.t-fa tr.t-g td,
+.t-fa tr.g td {
+  color: var(--t-amber);
+  font-weight: 500;
+}
+.t-fa tr.t-g td.t-lb,
+.t-fa tr.g td.lb,
+.t-fa tr.t-g td.t-pc,
+.t-fa tr.g td.pc {
+  color: var(--t-amber);
+}
+.t-fa tr:hover td {
+  background: #10223f;
+}
+.t-fa tr:hover td.t-lb,
+.t-fa tr:hover td.lb,
+.t-fa tr:hover td.t-ic,
+.t-fa tr:hover td.ic {
+  background: #14305e;
+}
+.t-fa .t-tg,
+.t-fa .tg {
+  font-style: normal;
+  cursor: pointer;
+  display: inline-block;
+  width: 18px;
+  color: #ddd;
+  font-size: 11px;
+  text-align: left;
+}
+.t-fa .t-ib,
+.t-fa .ib {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
+.t-fa .t-ib:hover rect,
+.t-fa .ib:hover rect {
+  fill: #8fd0ff;
+}
+
+.t-fanav {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 30px;
+  background: #000000;
+  border-top: 1px solid #262626;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 8px;
+  z-index: 6;
+}
+.t-fanav button {
+  width: 64px;
+  height: 22px;
+  background: #242424;
+  border: 1px solid #444;
+  color: #ddd;
+  font-size: 12px;
+  font-family: inherit;
+}
+.t-fanav button:hover {
+  background: #3a3a3a;
+  border-color: var(--t-amber);
+  color: var(--t-amber);
+}
+
+/* Terminal Panel Grid */
+.t-gr {
+  display: grid;
+  gap: 3px;
+  height: 100%;
+  padding: 3px;
+  background: #000000;
+}
+
+.t-pn {
+  background: #050505;
+  border: 1px solid #303030;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+.t-pn > h4 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  background: #181818;
+  color: var(--t-amber);
+  font-weight: 500;
+  padding: 3px 8px;
+  font-size: 12px;
+  border-bottom: 1px solid #2e2e2e;
+  white-space: nowrap;
+}
+
+.t-pn > h4 u {
+  text-decoration: none;
+  color: var(--t-cy);
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0 4px;
+  border: 1px solid rgba(66, 198, 255, 0.35);
+  background: rgba(66, 198, 255, 0.08);
+  font-size: 10.5px;
+}
+.t-pn > h4 u:hover {
+  background: var(--t-amber);
+  color: #000;
+  border-color: var(--t-amber);
+}
+
+.t-pn > h4 span.r {
+  display: flex;
+  gap: 10px;
+}
+.t-pn > h4 button {
+  color: #aaa;
+  font-size: 11px;
+  padding: 0 4px;
+  font-family: inherit;
+}
+.t-pn > h4 button.on {
+  background: var(--t-bl);
+  color: #fff;
+}
+
+.t-pb {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: auto;
+}
+.t-pb.t-fx,
+.t-pb.fx {
+  overflow: hidden;
+}
+
+.t-ch {
+  position: absolute;
+  inset: 0;
+}
+.t-ch svg {
+  position: absolute;
+  inset: 0;
+}
+
+.t-hit .t-hl {
+  opacity: 0;
+  pointer-events: none;
+}
+.t-hit:hover .t-hl {
+  opacity: 1;
+}
+
+/* Terminal Data Table */
+table.t-dt {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.t-dt th {
+  position: sticky;
+  top: 0;
+  background: #161616;
+  color: #c2c2c2;
+  font-weight: 500;
+  text-align: left;
+  padding: 3px 8px;
+  white-space: nowrap;
+  border-bottom: 1px solid #333;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.t-dt th:hover {
+  color: var(--t-amber);
+}
+.t-dt td {
+  padding: 0 8px;
+  height: var(--t-h);
+  border-bottom: 1px solid #141414;
+  white-space: nowrap;
+}
+.t-dt .t-r,
+.t-dt .r {
+  text-align: right;
+}
+.t-dt .t-c,
+.t-dt .c {
+  text-align: center;
+}
+.t-dt tr:hover td {
+  background: #10223f;
+}
+.t-dt tr.t-sel td,
+.t-dt tr.sel td {
+  background: #173a78;
+}
+
+/* Inventory Matrix Low Stock Hatch */
+.t-hatch {
+  display: block;
+  text-align: center;
+  background: repeating-linear-gradient(
+    -45deg,
+    #450d10,
+    #450d10 4px,
+    #881b20 4px,
+    #881b20 8px
+  );
+  color: #ffffff;
+  font-weight: 600;
+  border: 1px solid #ff4b43;
+}
+
+.t-mb {
+  display: inline-block;
+  width: 46px;
+  height: 6px;
+  background: #222;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+.t-mb i {
+  display: block;
+  height: 100%;
+  background: var(--t-amber);
+}
+
+.t-kv {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0 14px;
+  padding: 4px 10px;
+  font-size: 12px;
+}
+.t-kv > * {
+  height: var(--t-h);
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #141414;
+}
+.t-kv > *:nth-child(odd) {
+  color: var(--t-dim2);
+}
+.t-kv > *:nth-child(even) {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.t-hm {
+  display: grid;
+  gap: 2px;
+  padding: 6px;
+  font-size: 11px;
+}
+.t-hm b {
+  font-weight: 400;
+  color: var(--t-dim2);
+  text-align: center;
+}
+.t-hm span {
+  height: 20px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+}
+
+.t-lst {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.t-lst li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 10px;
+  border-bottom: 1px solid #141414;
+  font-size: 12px;
+}
+.t-lst li:hover {
+  background: #10223f;
+}
+.t-lst time {
+  color: var(--t-dim2);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.t-big {
+  font-size: 40px;
+  color: var(--t-amber);
+  padding: 10px 12px 2px;
+  line-height: 1;
+}
+.t-desc {
+  padding: 8px 10px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: #e2e2e2;
+}
+.t-desc h2 {
+  font-size: 14px;
+  color: var(--t-amber);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.t-desc small {
+  color: var(--t-dim2);
+}
+
+/* Bottom News / Event Wire */
+.t-news {
+  background: var(--t-nb);
+  font-size: 12.5px;
+  line-height: 1.35;
+  height: auto;
+  overflow: hidden;
+  position: relative;
+  z-index: 20;
+  border-top: 1px solid #1836a3;
+}
+.t-news .t-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #a7b2d6;
+  padding: 2px 10px;
+  font-size: 11.5px;
+  background: #071a66;
+}
+.t-news .t-hd button {
+  color: #bfc8e6;
+  margin-left: 14px;
+  font-family: inherit;
+}
+.t-news .t-hd button:hover {
+  color: #fff;
+}
+.t-news #t-nl div {
+  display: flex;
+  gap: 14px;
+  padding: 1px 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+}
+.t-news #t-nl div:hover {
+  background: #102a94;
+}
+.t-news #t-nl .t-s {
+  color: #ffd60a;
+  width: 34px;
+  flex: none;
+  text-align: right;
+  font-weight: 600;
+}
+.t-news #t-nl .t-m {
+  color: #b7c4f2;
+  flex: none;
+}
+.t-news #t-nl .t-x {
+  color: #f0e2b0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.t-news #t-nl div:first-child .t-x {
+  color: #ffffff;
+}
+.t-news.t-big #t-nl {
+  max-height: 40vh;
+  overflow: auto;
+}
+
+/* Menus & Overlays */
+.t-mn {
+  position: fixed;
+  z-index: 90;
+  background: #141414;
+  border: 1px solid var(--t-amber);
+  min-width: 240px;
+  display: none;
+  max-height: 70vh;
+  overflow-y: auto;
+  color: #ececec;
+  font-family: var(--t-font);
+}
+
+.t-mn.on {
+  display: block;
+}
+.t-mn button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  padding: 5px 12px;
+  font-size: 12.5px;
+  white-space: nowrap;
+  font-family: inherit;
+  border-bottom: 1px solid #1f1f1f;
+  color: #ececec;
+  background: transparent;
+}
+.t-mn button:hover {
+  background: var(--t-bl);
+  color: #ffffff;
+}
+
+.t-ovl {
+  position: fixed;
+  z-index: 95;
+  right: 14px;
+  top: 90px;
+  width: min(560px, 94vw);
+  max-height: 78vh;
+  overflow: auto;
+  background: #080808;
+  border: 1px solid var(--t-amber);
+  display: none;
+  color: #ececec;
+  font-family: var(--t-font);
+}
+
+.t-ovl.on {
+  display: block;
+}
+.t-ovl h3 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #181818;
+  color: var(--t-amber);
+  font-weight: 500;
+  padding: 5px 10px;
+  font-family: inherit;
+  border-bottom: 1px solid #333;
+}
+.t-ovl h3 button {
+  color: #fff;
+  font-family: inherit;
+}
+.t-ovl .t-in {
+  padding: 8px 12px;
+  font-size: 12.5px;
+}
+.t-ovl .t-rw {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 5px 0;
+  border-bottom: 1px solid #1a1a1a;
+}
+.t-ovl select {
+  background: #1c1c1c;
+  border: 1px solid #4a4a4a;
+  color: #ececec;
+  padding: 2px 8px;
+  font-family: inherit;
+}
+
+.t-pop {
+  position: fixed;
+  z-index: 92;
+  left: 50%;
+  top: 16vh;
+  transform: translateX(-50%);
+  width: min(740px, 94vw);
+  height: 360px;
+  background: #060606;
+  border: 1px solid var(--t-amber);
+  display: none;
+  flex-direction: column;
+  color: #ececec;
+  font-family: var(--t-font);
+}
+
+.t-pop.on {
+  display: flex;
+}
+.t-pop h3 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #181818;
+  color: var(--t-amber);
+  font-weight: 500;
+  padding: 5px 10px;
+  font-family: inherit;
+  border-bottom: 1px solid #333;
+}
+.t-pop h3 button {
+  color: #fff;
+  font-family: inherit;
+}
+
+.t-tip {
+  position: fixed;
+  z-index: 120;
+  pointer-events: none;
+  background: #050505;
+  border: 1px solid var(--t-amber);
+  color: #ececec;
+  padding: 4px 8px;
+  font-size: 11.5px;
+  opacity: 0;
+  max-width: 300px;
+  font-family: var(--t-font);
+  transition: opacity 0.08s ease;
+}
+.t-tip b {
+  font-weight: 600;
+  color: var(--t-amber);
+}
+
+.t-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 84px;
+  transform: translateX(-50%);
+  background: #000000;
+  border: 1px solid var(--t-amber);
+  color: var(--t-amber);
+  padding: 6px 16px;
+  z-index: 130;
+  display: none;
+  font-family: var(--t-font);
+  font-size: 12px;
+}
+
+.t-toast.on {
+  display: block;
+}
+
+.t-flash {
+  animation: t-fl 0.6s;
+}
+@keyframes t-fl {
+  from { background: #3b2a00; }
+  to { background: transparent; }
+}
+
+@media (max-width: 1100px) {
+  .t-nav {
+    width: 184px;
+  }
+  .t-tick1 {
+    font-size: 16px;
+  }
+  .t-tick1 .t-ba,
+  .t-tick1 .t-qs {
+    font-size: 13px;
+  }
+  .t-tick2 {
+    font-size: 12.5px;
+    gap: 10px;
+  }
+  .t-bar2 .t-id {
+    min-width: 0;
+  }
+  .t-fld.sec {
+    min-width: 150px;
+  }
+  .t-hide-s {
+    display: none !important;
+  }
+  .t-sr {
+    font-size: 12px;
+    gap: 8px;
+  }
+  .t-tabs button,
+  .t-sub button {
+    font-size: 11.5px;
+    padding: 3px 10px;
+  }
+  .t-news {
+    font-size: 11.5px;
+  }
+}
+
+@media (max-width: 780px) {
+  .t-nav {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 35;
+    box-shadow: 6px 0 24px rgba(0, 0, 0, 0.85);
+  }
+}

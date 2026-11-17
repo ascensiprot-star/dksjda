@@ -1,0 +1,2777 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   ZEJESH — THE LIGHT HOUSE
+   A monochrome, cinematic design system for a modern clothing house.
+   White is the room. Black is the ink. Photography is the event.
+   ========================================================================== */
+
+@theme {
+  --font-sans: "Jost", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Bodoni Moda", "Didot", "Times New Roman", serif;
+  --font-serif: "Bodoni Moda", "Didot", "Times New Roman", serif;
+  --font-editorial: "Bodoni Moda", "Didot", "Times New Roman", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-ink: #000000;
+  --color-paper: #ffffff;
+  --color-ink-a88: rgba(0, 0, 0, 0.88);
+  --color-ink-a72: rgba(0, 0, 0, 0.72);
+  --color-ink-a64: rgba(0, 0, 0, 0.64);
+  --color-ink-a55: rgba(0, 0, 0, 0.55);
+  --color-ink-a45: rgba(0, 0, 0, 0.45);
+  --color-ink-a40: rgba(0, 0, 0, 0.4);
+  --color-ink-a20: rgba(0, 0, 0, 0.2);
+  --color-ink-a18: rgba(0, 0, 0, 0.18);
+  --color-ink-a14: rgba(0, 0, 0, 0.14);
+  --color-ink-a10: rgba(0, 0, 0, 0.1);
+  --color-ink-a06: rgba(0, 0, 0, 0.06);
+  --color-ink-a04: rgba(0, 0, 0, 0.04);
+  --color-paper-a88: rgba(255, 255, 255, 0.92);
+  --color-paper-a72: rgba(255, 255, 255, 0.82);
+  --color-paper-a64: rgba(255, 255, 255, 0.76);
+  --color-paper-a55: rgba(255, 255, 255, 0.68);
+  --color-paper-a45: rgba(255, 255, 255, 0.62);
+  --color-paper-a40: rgba(255, 255, 255, 0.55);
+  --color-paper-a20: rgba(255, 255, 255, 0.34);
+  --color-paper-a18: rgba(255, 255, 255, 0.32);
+  --color-paper-a14: rgba(255, 255, 255, 0.24);
+  --color-paper-a10: rgba(255, 255, 255, 0.18);
+  --color-paper-a06: rgba(255, 255, 255, 0.12);
+}
+
+:root {
+  --ink: #000000;
+  --paper: #ffffff;
+  --ink-a88: rgba(0, 0, 0, 0.88);
+  --ink-a72: rgba(0, 0, 0, 0.72);
+  --ink-a64: rgba(0, 0, 0, 0.64);
+  --ink-a55: rgba(0, 0, 0, 0.55);
+  --ink-a45: rgba(0, 0, 0, 0.45);
+  --ink-a40: rgba(0, 0, 0, 0.4);
+  --ink-a20: rgba(0, 0, 0, 0.2);
+  --ink-a18: rgba(0, 0, 0, 0.18);
+  --ink-a14: rgba(0, 0, 0, 0.14);
+  --ink-a10: rgba(0, 0, 0, 0.1);
+  --ink-a06: rgba(0, 0, 0, 0.06);
+  --paper-a72: rgba(255, 255, 255, 0.82);
+  --paper-a45: rgba(255, 255, 255, 0.62);
+  --paper-a18: rgba(255, 255, 255, 0.32);
+  --paper-a06: rgba(255, 255, 255, 0.12);
+
+  --font-display-stack: "Bodoni Moda", "Didot", "Times New Roman", serif;
+  --font-ui-stack: "Jost", "Helvetica Neue", Arial, sans-serif;
+  --font-mono-stack: "IBM Plex Mono", ui-monospace, monospace;
+
+  --fs-xxl: clamp(80px, 21vw, 380px);
+  --fs-xl: clamp(52px, 8.4vw, 148px);
+  --fs-l: clamp(38px, 5.2vw, 88px);
+  --fs-h3: clamp(24px, 2.2vw, 32px);
+  --fs-body-l: 17px;
+  --fs-body: 14px;
+  --fs-label: 10px;
+  --track-label: 0.28em;
+  --track-display: -0.035em;
+
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-12: 48px;
+  --s-16: 64px;
+  --s-24: 96px;
+  --s-32: 128px;
+  --s-48: 192px;
+  --gutter: clamp(18px, 3.4vw, 52px);
+  --section: clamp(92px, 11vw, 172px);
+  --pad: var(--gutter);
+  --nav-h: 78px;
+
+  --radius: 0;
+  --hairline: 1px solid var(--ink-a14);
+  --line: var(--ink-a14);
+  --line-strong: var(--ink-a20);
+  --line-invert: var(--paper-a18);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-inout: cubic-bezier(0.76, 0, 0.24, 1);
+  --t-micro: 300ms;
+  --t-std: 600ms;
+  --t-reveal: 1100ms;
+
+  color-scheme: light;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+html {
+  background: var(--paper);
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-ui-stack);
+  font-size: var(--fs-body);
+  font-weight: 300;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+}
+
+#root {
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: var(--paper);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.24);
+}
+
+img,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+  text-align: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+  font-weight: inherit;
+}
+
+:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: 4px;
+}
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ==========================================================================
+   SURFACES
+   ========================================================================== */
+
+.on-ink {
+  background: var(--ink);
+  color: var(--paper);
+  --line: var(--paper-a18);
+  --line-strong: var(--paper-a20);
+  --hairline: 1px solid var(--paper-a18);
+  color-scheme: dark;
+}
+
+/* Legacy inverted block: on the light house this is the black moment. */
+.on-paper {
+  background: var(--ink);
+  color: var(--paper);
+  --line: var(--paper-a18);
+  --line-strong: var(--paper-a20);
+  --hairline: 1px solid var(--paper-a18);
+  color-scheme: dark;
+}
+
+.on-paper .text-ink-a40,
+.on-paper .text-ink-a45,
+.on-paper .text-ink-a55,
+.on-paper .text-ink-a64,
+.on-paper .text-ink-a72,
+.on-paper .text-ink-a88 {
+  color: rgba(255, 255, 255, 0.62);
+}
+.on-paper .text-ink {
+  color: var(--paper);
+}
+.on-paper .border-ink-a14,
+.on-paper .border-ink-a18,
+.on-paper .border-ink-a20 {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.surface-ink {
+  background: var(--ink);
+  color: var(--paper);
+  --line: var(--paper-a18);
+}
+.surface-paper,
+.surface-white,
+.surface-paper-deep {
+  background: var(--paper);
+  color: var(--ink);
+  --line: var(--ink-a14);
+}
+
+.grain::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+.img-mono {
+  filter: grayscale(1) contrast(1.05);
+}
+
+/* ==========================================================================
+   TYPE
+   ========================================================================== */
+
+.font-display,
+.font-serif,
+.font-editorial {
+  font-family: var(--font-display-stack);
+  font-weight: 400;
+}
+.font-mono,
+.font-grotesk {
+  font-family: var(--font-mono-stack);
+}
+
+.display-xxl {
+  font-family: var(--font-display-stack);
+  font-size: var(--fs-xxl);
+  line-height: 0.78;
+  letter-spacing: var(--track-display);
+  font-weight: 400;
+}
+
+.display-xl,
+.display {
+  font-family: var(--font-display-stack);
+  font-size: var(--fs-xl);
+  line-height: 0.86;
+  letter-spacing: var(--track-display);
+  font-weight: 400;
+}
+
+.display-serif,
+.display-l {
+  font-family: var(--font-display-stack);
+  font-size: var(--fs-l);
+  line-height: 1;
+  letter-spacing: -0.025em;
+  font-weight: 400;
+}
+
+.heading,
+.text-display {
+  font-family: var(--font-display-stack);
+  font-size: var(--fs-h3);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  font-weight: 400;
+}
+
+.text-title {
+  font-family: var(--font-display-stack);
+  font-size: clamp(20px, 2vw, 28px);
+  line-height: 1.08;
+  letter-spacing: -0.005em;
+  font-weight: 400;
+}
+
+/* ==========================================================================
+   THE EDIT — asymmetric collection composition
+   ========================================================================== */
+
+.collection-editorial {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(18px, 3.4vw, 54px);
+  row-gap: clamp(64px, 8vw, 120px);
+}
+
+.collection-editorial__item:nth-child(1) {
+  grid-column: 1 / span 6;
+  grid-row: 1;
+}
+.collection-editorial__item:nth-child(2) {
+  grid-column: 8 / span 5;
+  grid-row: 1;
+  margin-top: clamp(70px, 12vw, 190px);
+}
+.collection-editorial__item:nth-child(3) {
+  grid-column: 1 / span 4;
+  grid-row: 2;
+}
+.collection-editorial__item:nth-child(4) {
+  grid-column: 7 / span 6;
+  grid-row: 2;
+  margin-top: clamp(60px, 9vw, 130px);
+}
+.collection-editorial__item:nth-child(5) {
+  grid-column: 2 / span 5;
+  grid-row: 3;
+}
+.collection-editorial__item:nth-child(6) {
+  grid-column: 9 / span 4;
+  grid-row: 3;
+  margin-top: clamp(50px, 8vw, 110px);
+}
+
+@media (max-width: 820px) {
+  .collection-editorial {
+    grid-template-columns: 1fr;
+    row-gap: 64px;
+  }
+  .collection-editorial__item:nth-child(n) {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    margin-top: 0;
+  }
+  .collection-editorial__item:nth-child(even) {
+    margin-left: 12%;
+  }
+  .collection-editorial__item:nth-child(odd) {
+    margin-right: 8%;
+  }
+}
+
+
+.italic-serif,
+em,
+i {
+  font-family: var(--font-display-stack);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.label,
+.micro,
+.micro-sm,
+.edge-label,
+.text-small {
+  font-family: var(--font-ui-stack);
+  font-size: var(--fs-label);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+}
+
+.micro-sm {
+  font-size: 8px;
+  letter-spacing: 0.3em;
+}
+
+.edge-label {
+  font-size: 9px;
+  letter-spacing: 0.26em;
+}
+
+.body-copy,
+.text-body {
+  font-family: var(--font-ui-stack);
+  font-size: var(--fs-body);
+  line-height: 1.8;
+  font-weight: 300;
+  max-width: 52ch;
+}
+
+.body-copy-lg {
+  font-size: var(--fs-body-l);
+  line-height: 1.72;
+  font-weight: 300;
+  max-width: 52ch;
+}
+
+.price {
+  font-family: var(--font-mono-stack);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  font-weight: 400;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+.eyebrow::before {
+  content: "";
+  display: block;
+  width: 34px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.4;
+}
+
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px currentColor;
+}
+
+/* ==========================================================================
+   LAYOUT
+   ========================================================================== */
+
+.page-shell {
+  width: 100%;
+  max-width: 1920px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.page-narrow {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.page-top {
+  padding-top: calc(var(--nav-h) + clamp(36px, 6vw, 88px));
+}
+
+.section {
+  padding-block: var(--section);
+}
+
+.section-sm {
+  padding-block: clamp(60px, 7vw, 110px);
+}
+
+.hairline {
+  border-color: var(--line);
+}
+.hairline-invert {
+  border-color: var(--line-invert);
+}
+
+.rule {
+  height: 1px;
+  width: 100%;
+  background: var(--line);
+}
+.rule-invert {
+  height: 1px;
+  width: 100%;
+  background: var(--line-invert);
+}
+
+/* ==========================================================================
+   CINEMATIC HERO — one film at a time, exactly one viewport
+   ========================================================================== */
+
+.hero-stage {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 560px;
+  width: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+.hero-stage__reel {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1100ms var(--ease-inout);
+}
+
+.hero-slide.is-active {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 1;
+}
+
+.hero-slide__media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.06) brightness(0.78);
+  transform: scale(1.035);
+  transition: transform 9000ms linear;
+  will-change: transform;
+}
+
+.hero-slide.is-active .hero-slide__media {
+  transform: scale(1.11);
+}
+
+.hero-stage__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(to top, rgba(0, 0, 0, 0.58) 0%, rgba(0, 0, 0, 0) 32%),
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.66) 0%,
+      rgba(0, 0, 0, 0.28) 10%,
+      rgba(0, 0, 0, 0) 24%
+    );
+}
+
+.hero-dots {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(18px, 2.6vw, 34px);
+  z-index: 3;
+  display: flex;
+  transform: translateX(-50%);
+  gap: clamp(4px, 0.6vw, 8px);
+  padding: 10px 4px;
+}
+
+.hero-dot {
+  display: flex;
+  width: clamp(24px, 3vw, 40px);
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: none;
+  border: 0;
+}
+
+.hero-dot__track {
+  display: block;
+  width: 100%;
+  height: 1px;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.32);
+  transition: background-color 400ms ease, transform 400ms ease;
+}
+
+.hero-dot.is-active .hero-dot__track {
+  background: #fff;
+  transform: scaleY(2.5);
+}
+
+.hero-dot:hover .hero-dot__track {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+/* Adaptive navigation over full-bleed film scenes. */
+.site-header--over-media {
+  background: transparent;
+  color: #fff;
+}
+
+.site-header--over-media:hover,
+.site-header--over-media:focus-within {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+/* ==========================================================================
+   OVERTURE — full-bleed opening chapter
+   ========================================================================== */
+
+.overture {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 620px;
+  width: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+.overture__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.1) brightness(0.78);
+  transform: scale(1.02);
+  animation: overture-drift 26s var(--ease-inout) infinite alternate;
+  will-change: transform;
+}
+
+.overture__media--video {
+  animation: none;
+  transform: none;
+  filter: grayscale(1) contrast(1.12) brightness(0.62);
+}
+
+@keyframes overture-drift {
+  from {
+    transform: scale(1.02);
+  }
+  to {
+    transform: scale(1.1) translate3d(0, -1%, 0);
+  }
+}
+
+.overture__shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.86) 0%,
+    rgba(0, 0, 0, 0.22) 46%,
+    rgba(0, 0, 0, 0.48) 100%
+  );
+}
+
+.overture__top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: calc(var(--nav-h) + 22px);
+}
+
+.overture__bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 30px;
+  padding-bottom: clamp(34px, 4.4vw, 70px);
+}
+
+.overture__index {
+  position: absolute;
+  right: var(--gutter);
+  top: 50%;
+  z-index: 2;
+  display: none;
+  transform: translateY(-50%);
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono-stack);
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+@media (min-width: 768px) {
+  .overture__bottom {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 40px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .overture__index {
+    display: flex;
+  }
+}
+
+/* ==========================================================================
+   THE EDIT — horizontal reel
+   ========================================================================== */
+
+.edit-reel {
+  display: flex;
+  gap: clamp(14px, 2vw, 32px);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-inline: var(--gutter);
+  scroll-padding-inline: var(--gutter);
+}
+
+.edit-reel__item {
+  flex: 0 0 clamp(278px, 36vw, 545px);
+  scroll-snap-align: start;
+}
+
+@media (max-width: 640px) {
+  .edit-reel__item {
+    flex-basis: 82vw;
+  }
+}
+
+/* ==========================================================================
+   FILM — full-bleed moving picture
+   ========================================================================== */
+
+.film-scene {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 620px;
+  width: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+.film-scene__media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 55%;
+  filter: grayscale(1) contrast(1.14) brightness(0.52);
+}
+
+.film-scene__shade {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 45%, transparent 20%, rgba(0, 0, 0, 0.42) 100%),
+    linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.82) 0%,
+      rgba(0, 0, 0, 0.18) 55%,
+      rgba(0, 0, 0, 0.42) 100%
+    );
+}
+
+.film-scene__frame {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.film-scene__topbar {
+  padding-top: calc(var(--nav-h) + 18px);
+  padding-bottom: 16px;
+}
+
+/* Third scene — the atelier film */
+.craft-scene__media {
+  object-position: center 42%;
+  filter: grayscale(1) contrast(1.16) brightness(0.46);
+}
+
+.craft-scene__shade {
+  background:
+    radial-gradient(ellipse at 50% 48%, rgba(0, 0, 0, 0.16) 0%, rgba(0, 0, 0, 0.62) 100%),
+    linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.9) 0%,
+      rgba(0, 0, 0, 0.3) 55%,
+      rgba(0, 0, 0, 0.62) 100%
+    );
+}
+
+/* Home chapters in the house film sequence */
+.scene__media {
+  object-position: var(--scene-pos, center);
+  filter: grayscale(1) contrast(1.1) brightness(0.86);
+}
+
+@media (max-width: 767px) {
+  .scene__media {
+    object-position: var(--scene-pos-m, var(--scene-pos, center));
+  }
+}
+
+.scene__shade {
+  background:
+    radial-gradient(ellipse at 50% 42%, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.42) 100%),
+    linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.84) 0%,
+      rgba(0, 0, 0, 0.18) 50%,
+      rgba(0, 0, 0, 0.42) 100%
+    );
+}
+
+/* ==========================================================================
+   THE PIECES — a full-screen triptych of photographs
+   ========================================================================== */
+
+.collection-stage {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 560px;
+  width: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+.collection-stage__panels {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  height: 100%;
+  background: #000;
+}
+
+.collection-panel {
+  position: relative;
+  z-index: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #080808;
+  text-align: left;
+}
+
+.collection-panel__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) brightness(0.58) contrast(1.08);
+  transition: transform 1600ms var(--ease-out-expo), filter 900ms var(--ease-out-expo);
+}
+
+.collection-panel:hover .collection-panel__image {
+  transform: scale(1.03);
+  filter: grayscale(1) brightness(0.72) contrast(1.06);
+}
+
+.collection-panel__shade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.collection-panel__caption {
+  position: absolute;
+  left: clamp(16px, 1.8vw, 28px);
+  bottom: clamp(24px, 3vw, 38px);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.collection-stage__all {
+  position: absolute;
+  top: calc(var(--nav-h) + 18px);
+  right: var(--gutter);
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0;
+  background: none;
+  border: 0;
+}
+
+@media (max-width: 767px) {
+  .collection-stage__panels {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-inline: var(--gutter);
+  }
+  .collection-panel {
+    flex: 0 0 82vw;
+    scroll-snap-align: start;
+  }
+}
+
+/* The house closes on the same dark note as the films. */
+.footer--dark .label {
+  color: rgba(255, 255, 255, 0.46);
+}
+
+.footer--dark .text-ink-a72 {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.footer--dark .text-ink-a45 {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.footer--dark .text-ink-a40 {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.footer--dark .text-ink-a64 {
+  color: rgba(255, 255, 255, 0.64);
+}
+
+.footer--dark .border-t {
+  border-top: 0;
+}
+
+.footer--dark .bg-ink {
+  background-color: #fff;
+}
+
+.footer--dark .hover\:text-ink:hover {
+  color: #fff;
+}
+
+/* ==========================================================================
+   LOOKBOOK — full-bleed band
+   ========================================================================== */
+
+.lookbook-band {
+  display: flex;
+  align-items: flex-start;
+  gap: 2px;
+  overflow-x: auto;
+  padding-inline: var(--gutter);
+  padding-bottom: 52px;
+}
+
+.lookbook-band > button {
+  flex: 0 0 clamp(260px, 30vw, 520px);
+  aspect-ratio: 3 / 4;
+}
+
+.lookbook-band__offset {
+  margin-top: 56px;
+}
+
+@media (max-width: 640px) {
+  .lookbook-band > button {
+    flex-basis: 78vw;
+  }
+}
+
+
+/* ==========================================================================
+   BUTTONS / LINKS
+   ========================================================================== */
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  min-height: 52px;
+  padding: 0 34px;
+  border-radius: 0;
+  border: 1px solid transparent;
+  font-family: var(--font-ui-stack);
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  isolation: isolate;
+  transition: color 450ms var(--ease-inout), border-color 450ms var(--ease-inout);
+}
+
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 600ms var(--ease-inout);
+}
+
+.btn:hover::before {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.btn-primary,
+.btn-ink {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.btn-primary::before,
+.btn-ink::before {
+  background: var(--paper);
+}
+.btn-primary:hover,
+.btn-ink:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+.btn-secondary,
+.btn-ghost,
+.btn-ghost-ink {
+  background: transparent;
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.btn-secondary::before,
+.btn-ghost::before,
+.btn-ghost-ink::before {
+  background: var(--ink);
+}
+.btn-secondary:hover,
+.btn-ghost:hover,
+.btn-ghost-ink:hover {
+  color: var(--paper);
+}
+
+.btn-white {
+  background: var(--paper);
+  border-color: var(--paper);
+  color: var(--ink);
+}
+.btn-white::before {
+  background: var(--ink);
+}
+.btn-white:hover {
+  color: var(--paper);
+  border-color: var(--paper);
+}
+
+.on-ink .btn-primary,
+.on-ink .btn-ink,
+.on-paper .btn-primary {
+  background: var(--paper);
+  border-color: var(--paper);
+  color: var(--ink);
+}
+.on-ink .btn-primary::before,
+.on-ink .btn-ink::before,
+.on-paper .btn-primary::before {
+  background: var(--ink);
+}
+.on-ink .btn-primary:hover,
+.on-ink .btn-ink:hover,
+.on-paper .btn-primary:hover {
+  color: var(--paper);
+}
+
+.on-ink .btn-secondary,
+.on-ink .btn-ghost,
+.on-paper .btn-secondary {
+  border-color: var(--paper);
+  color: var(--paper);
+}
+.on-ink .btn-secondary::before,
+.on-ink .btn-ghost::before,
+.on-paper .btn-secondary::before {
+  background: var(--paper);
+}
+.on-ink .btn-secondary:hover,
+.on-ink .btn-ghost:hover,
+.on-paper .btn-secondary:hover {
+  color: var(--ink);
+}
+
+.btn-sm {
+  min-height: 42px;
+  padding: 0 22px;
+}
+
+.btn:disabled,
+.btn[disabled] {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.btn-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-family: var(--font-ui-stack);
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 5px;
+  transition: opacity var(--t-micro) var(--ease-out-expo);
+}
+.btn-text .arrow,
+.btn-text span[aria-hidden] {
+  display: inline-block;
+  transition: transform var(--t-micro) var(--ease-out-expo);
+}
+.btn-text:hover .arrow,
+.btn-text:hover span[aria-hidden] {
+  transform: translateX(5px);
+}
+
+.link-line,
+.link-underline {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 5px;
+  border-bottom: 1px solid currentColor;
+  transition: opacity var(--t-micro) var(--ease-out-expo);
+}
+.link-line:hover,
+.link-underline:hover {
+  opacity: 0.5;
+}
+
+.arrow-shift {
+  display: inline-block;
+  transition: transform var(--t-micro) var(--ease-out-expo);
+}
+a:hover .arrow-shift,
+button:hover .arrow-shift,
+.group:hover .arrow-shift {
+  transform: translateX(5px);
+}
+
+/* ==========================================================================
+   PRODUCT CARD — photography first, quiet caption
+   ========================================================================== */
+
+.product-card {
+  position: relative;
+  background: transparent;
+  overflow: hidden;
+  transition: color 400ms var(--ease-inout);
+}
+
+.product-card__wipe {
+  display: none;
+}
+
+.product-card__media {
+  position: relative;
+  overflow: hidden;
+  background: #0a0a0a;
+}
+
+.product-card__media img {
+  filter: grayscale(1) contrast(1.04);
+  transition: transform 1100ms var(--ease-out-expo), filter 1100ms var(--ease-out-expo);
+}
+
+.product-card:hover .product-card__media img {
+  transform: scale(1.045);
+  filter: grayscale(1) contrast(1.08);
+}
+
+.product-card__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  opacity: 0;
+  transition: opacity 700ms var(--ease-inout);
+  pointer-events: none;
+}
+.product-card:hover .product-card__media::after {
+  opacity: 0.06;
+}
+
+.product-card__body {
+  position: relative;
+  padding: 0;
+}
+
+.product-card__index {
+  font-family: var(--font-mono-stack);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: var(--ink-a40);
+}
+
+.product-card__meta {
+  color: var(--ink-a45);
+  transition: color 500ms var(--ease-inout);
+}
+
+.product-card__name {
+  font-family: var(--font-display-stack);
+  font-size: clamp(20px, 1.9vw, 27px);
+  line-height: 1.02;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+}
+
+.product-card__add {
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity 400ms var(--ease-out-expo), transform 400ms var(--ease-out-expo);
+}
+.product-card:hover .product-card__add {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.product-card__quick {
+  transform: translateY(100%);
+  transition: transform 600ms var(--ease-out-expo);
+}
+
+.product-card:hover .product-card__quick,
+.product-card:focus-within .product-card__quick {
+  transform: translateY(0);
+}
+
+.product-card__save {
+  opacity: 0;
+}
+
+.product-card:hover .product-card__save,
+.product-card:focus-within .product-card__save {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .product-card__quick {
+    transform: translateY(0);
+  }
+  .product-card__save {
+    opacity: 1;
+  }
+}
+
+.product-plate .plate-media {
+  background: #0a0a0a;
+  overflow: hidden;
+  position: relative;
+}
+.product-plate .plate-media::after {
+  display: none;
+}
+.plate-index {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 3;
+  color: var(--paper);
+  mix-blend-mode: difference;
+}
+.quick-actions {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  opacity: 0;
+  z-index: 4;
+  transition: opacity 300ms var(--ease-out-expo);
+}
+.product-plate:hover .quick-actions {
+  opacity: 1;
+}
+
+/* ==========================================================================
+   TAGS / CHIPS / SIZES
+   ========================================================================== */
+
+.pill,
+.tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 30px;
+  padding: 9px 15px;
+  border-radius: 0;
+  border: 1px solid var(--ink-a18);
+  background: transparent;
+  font-family: var(--font-ui-stack);
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: background var(--t-micro) var(--ease-out-expo), color var(--t-micro) var(--ease-out-expo);
+}
+.pill:hover,
+.tag:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.pill-dark {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+.pill-dark:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 17px;
+  border: 1px solid var(--ink-a18);
+  border-radius: 0;
+  font-family: var(--font-ui-stack);
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  transition: background var(--t-micro) var(--ease-out-expo), color var(--t-micro) var(--ease-out-expo);
+}
+.chip[data-active="true"],
+.chip:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.size-option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid var(--ink-a18);
+  border-radius: 0;
+  font-family: var(--font-mono-stack);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: background var(--t-micro) var(--ease-inout), color var(--t-micro) var(--ease-inout);
+}
+.size-option:hover {
+  border-color: var(--ink);
+}
+.size-option[data-selected="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.size-option[data-unavailable="true"] {
+  opacity: 0.35;
+  background-image: linear-gradient(
+    to top right,
+    transparent calc(50% - 0.5px),
+    var(--ink-a18) calc(50% - 0.5px),
+    var(--ink-a18) calc(50% + 0.5px),
+    transparent calc(50% + 0.5px)
+  );
+}
+
+/* ==========================================================================
+   FORMS
+   ========================================================================== */
+
+.field {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--ink-a18);
+  border-radius: 0;
+  padding: 14px 0;
+  font-family: var(--font-ui-stack);
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  outline: none;
+  transition: border-color var(--t-micro) var(--ease-out-expo);
+}
+.field::placeholder {
+  color: var(--ink-a40);
+  font-family: var(--font-ui-stack);
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+.field:focus {
+  border-bottom-color: var(--ink);
+}
+.field-dark {
+  color: var(--paper);
+  border-bottom-color: var(--paper-a18);
+}
+.field-dark::placeholder {
+  color: var(--paper-a45);
+}
+.field-dark:focus {
+  border-bottom-color: var(--paper);
+}
+.on-ink .field,
+.on-paper .field {
+  color: var(--paper);
+  border-bottom-color: var(--paper-a18);
+}
+.on-ink .field::placeholder,
+.on-paper .field::placeholder {
+  color: var(--paper-a45);
+}
+.on-ink .field:focus,
+.on-paper .field:focus {
+  border-bottom-color: var(--paper);
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--font-ui-stack);
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-a45);
+}
+.field-error {
+  border-bottom: 1px dashed currentColor;
+}
+.field-error-message {
+  margin-top: 8px;
+  font-family: var(--font-ui-stack);
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+
+select.field {
+  appearance: none;
+  border-radius: 0;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 12px) 55%, calc(100% - 7px) 55%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 24px;
+}
+select.field option {
+  background: var(--paper);
+  color: var(--ink);
+}
+.on-ink select.field option,
+.on-paper select.field option {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* ==========================================================================
+   OVERLAYS / DRAWERS / MODALS
+   ========================================================================== */
+
+.overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 0;
+}
+
+.drawer-panel {
+  background: var(--paper);
+  color: var(--ink);
+  border-left: 1px solid var(--ink-a14);
+  border-radius: 0;
+}
+
+.modal-panel {
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--ink-a14);
+  border-radius: 0;
+}
+
+.modal-dark {
+  background: var(--ink);
+  color: var(--paper);
+  border: 1px solid var(--paper-a18);
+  border-radius: 0;
+}
+
+.modal-paper {
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--ink-a14);
+  border-radius: 0;
+}
+
+/* ==========================================================================
+   MARQUEE / MOTION
+   ========================================================================== */
+
+@keyframes house-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  animation: house-marquee 38s linear infinite;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes house-rise {
+  from {
+    transform: translateY(110%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+.mask-rise > * {
+  animation: house-rise 1100ms var(--ease-inout) both;
+}
+
+@keyframes house-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(38px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes house-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes house-slide-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes house-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-slideIn {
+  animation: house-slide-in 700ms var(--ease-inout) both;
+}
+.animate-slideUp {
+  animation: house-slide-up 700ms var(--ease-inout) both;
+}
+.animate-fadeIn {
+  animation: house-fade 600ms var(--ease-out-expo) both;
+}
+.animate-fadeUp {
+  animation: house-fade-up 1100ms var(--ease-inout) both;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(38px);
+  transition: opacity var(--t-reveal) var(--ease-inout), transform var(--t-reveal) var(--ease-inout);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(34px);
+  transition: opacity 1000ms var(--ease-inout), transform 1000ms var(--ease-inout);
+}
+.reveal-stagger.is-visible > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-stagger.is-visible > *:nth-child(2) { transition-delay: 90ms; }
+.reveal-stagger.is-visible > *:nth-child(3) { transition-delay: 180ms; }
+.reveal-stagger.is-visible > *:nth-child(4) { transition-delay: 270ms; }
+.reveal-stagger.is-visible > *:nth-child(5) { transition-delay: 360ms; }
+.reveal-stagger.is-visible > *:nth-child(6) { transition-delay: 450ms; }
+.reveal-delay-1 { transition-delay: 100ms; }
+.reveal-delay-2 { transition-delay: 200ms; }
+.reveal-delay-3 { transition-delay: 300ms; }
+
+/* ==========================================================================
+   EDITORIAL GRAPHICS
+   ========================================================================== */
+
+.flat-plate {
+  position: relative;
+  overflow: hidden;
+  background: #0a0a0a;
+}
+.flat-plate-light {
+  background: #f4f4f4;
+}
+.flat-plate-dark {
+  background: #000000;
+}
+
+.flat-lines {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.12) 0,
+      rgba(0, 0, 0, 0.12) 1px,
+      transparent 1px,
+      transparent 12.5%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.12) 0,
+      rgba(0, 0, 0, 0.12) 1px,
+      transparent 1px,
+      transparent 12.5%
+    );
+}
+.flat-lines-invert {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.14) 0,
+      rgba(255, 255, 255, 0.14) 1px,
+      transparent 1px,
+      transparent 12.5%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.14) 0,
+      rgba(255, 255, 255, 0.14) 1px,
+      transparent 1px,
+      transparent 12.5%
+    );
+}
+
+.flat-circle {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  background: #ffffff;
+}
+.flat-circle-solid {
+  position: absolute;
+  border-radius: 50%;
+  background: #000000;
+}
+.flat-bar {
+  position: absolute;
+  background: #000000;
+}
+.flat-bar-invert {
+  position: absolute;
+  background: #ffffff;
+}
+
+/* ==========================================================================
+   ADMIN — ZEJESH TERMINAL UI BRIDGE
+   Every admin screen, gate, modal and CRUD workbench shares the dense dark
+   Bloomberg-grade Terminal language: #000000 void, #050505 panels,
+   IBM Plex Mono, tabular numerics, 0px corners, amber/cyan/green telemetry.
+   ========================================================================== */
+
+.admin-scope {
+  /* Terminal palette */
+  --admin-bg: #000000;
+  --admin-surface: #050505;
+  --admin-surface-2: #0d0d0d;
+  --admin-text: #ececec;
+  --admin-muted: #9a9a9a;
+  --admin-faint: #666666;
+  --admin-line: #262626;
+  --admin-line-2: #3a3a3a;
+  --admin-line-3: #555555;
+
+  /* Semantic telemetry accents */
+  --admin-blue: #42c6ff;
+  --admin-indigo: #42c6ff;
+  --admin-green: #2fd35f;
+  --admin-teal: #2fd35f;
+  --admin-amber: #ffa21f;
+  --admin-red: #ff4b43;
+  --admin-violet: #ffa21f;
+  --admin-yellow: #ffd60a;
+
+  /* Remap storefront ink/paper Tailwind v4 tokens inside .admin-scope */
+  --color-ink: #000000;
+  --color-paper: #ececec;
+  --color-ink-a88: rgba(0, 0, 0, 0.92);
+  --color-ink-a72: rgba(0, 0, 0, 0.8);
+  --color-ink-a64: rgba(0, 0, 0, 0.72);
+  --color-ink-a55: rgba(0, 0, 0, 0.65);
+  --color-ink-a40: rgba(0, 0, 0, 0.55);
+  --color-ink-a20: rgba(0, 0, 0, 0.34);
+  --color-ink-a14: rgba(0, 0, 0, 0.24);
+  --color-ink-a10: rgba(0, 0, 0, 0.18);
+  --color-ink-a06: rgba(0, 0, 0, 0.12);
+  --color-ink-a04: rgba(0, 0, 0, 0.08);
+  --color-paper-a88: rgba(236, 236, 236, 0.88);
+  --color-paper-a72: rgba(236, 236, 236, 0.74);
+  --color-paper-a64: rgba(236, 236, 236, 0.66);
+  --color-paper-a55: rgba(180, 180, 180, 0.85);
+  --color-paper-a45: #9a9a9a;
+  --color-paper-a40: #888888;
+  --color-paper-a20: #3a3a3a;
+  --color-paper-a18: #262626;
+  --color-paper-a14: #1f1f1f;
+  --color-paper-a10: #141414;
+  --color-paper-a06: #0d0d0d;
+
+  /* Legacy CSS variable aliases */
+  --ink: #ececec;
+  --paper: #050505;
+  --ink-a88: rgba(236, 236, 236, 0.88);
+  --ink-a72: rgba(236, 236, 236, 0.74);
+  --ink-a64: rgba(236, 236, 236, 0.66);
+  --ink-a55: rgba(180, 180, 180, 0.85);
+  --ink-a45: #9a9a9a;
+  --ink-a40: #888888;
+  --ink-a20: #3a3a3a;
+  --ink-a18: #262626;
+  --ink-a14: #1f1f1f;
+  --ink-a10: #141414;
+  --ink-a06: #0d0d0d;
+  --paper-a88: rgba(236, 236, 236, 0.88);
+  --paper-a72: rgba(236, 236, 236, 0.74);
+  --paper-a45: #9a9a9a;
+  --paper-a18: #262626;
+  --paper-a06: #0d0d0d;
+
+  --line: #262626;
+  --line-invert: #262626;
+  --font-display-stack: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+  --font-ui-stack: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+  --font-mono-stack: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+
+  background: #000000 !important;
+  color: #ececec !important;
+  color-scheme: dark;
+  font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+  font-size: 12.5px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-scope * {
+  font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+}
+
+.admin-scope .font-mono,
+.admin-scope code,
+.admin-scope pre,
+.admin-scope kbd {
+  font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace !important;
+  letter-spacing: 0 !important;
+}
+
+/* ---- Terminal headings --------------------------------------------------- */
+.admin-scope h1 {
+  font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace !important;
+  font-weight: 600 !important;
+  font-size: 26px !important;
+  line-height: 1.15 !important;
+  letter-spacing: 0.02em !important;
+  text-transform: uppercase !important;
+  color: #ffa21f !important;
+}
+
+.admin-scope h2 {
+  font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  line-height: 1.3 !important;
+  letter-spacing: 0.03em !important;
+  text-transform: uppercase !important;
+  color: #ececec !important;
+}
+
+.admin-scope h3 {
+  font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  line-height: 1.3 !important;
+  letter-spacing: 0.02em !important;
+  color: #ffa21f !important;
+}
+
+.admin-scope h4,
+.admin-scope h5,
+.admin-scope h6 {
+  font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace !important;
+  font-weight: 500 !important;
+  font-size: 12px !important;
+  letter-spacing: 0.03em !important;
+  color: #ececec;
+}
+
+.admin-scope h1 em,
+.admin-scope h2 em,
+.admin-scope h3 em {
+  font-style: normal !important;
+  color: #ececec;
+}
+
+.admin-scope .font-display,
+.admin-scope .font-serif,
+.admin-scope .text-display,
+.admin-scope .text-title {
+  font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Metric KPI numerals stand out cleanly */
+.admin-scope .font-display[class*="text-[40px]"],
+.admin-scope .font-display[class*="text-[38px]"],
+.admin-scope .font-display[class*="text-[36px]"],
+.admin-scope .font-display[class*="text-[34px]"],
+.admin-scope .font-display[class*="text-[32px]"],
+.admin-scope .font-display[class*="text-[30px]"],
+.admin-scope .font-display[class*="text-[28px]"],
+.admin-scope .font-display[class*="text-[24px]"],
+.admin-scope .font-display[class*="text-[clamp"] {
+  font-size: 26px !important;
+  font-weight: 600 !important;
+  color: #ececec !important;
+}
+
+/* Small technical labels */
+.admin-scope .micro,
+.admin-scope .micro-sm,
+.admin-scope .edge-label,
+.admin-scope .text-small,
+.admin-scope .label {
+  font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace !important;
+  font-size: 11px !important;
+  letter-spacing: 0.06em !important;
+  font-weight: 500 !important;
+}
+
+.admin-scope .text-small {
+  font-size: 12px !important;
+  letter-spacing: 0.01em !important;
+  font-weight: 400 !important;
+}
+
+.admin-scope .text-paper-a18,
+.admin-scope .text-paper-a20,
+.admin-scope .text-paper-a14,
+.admin-scope .text-paper-a10,
+.admin-scope .text-paper-a06 {
+  color: #777777 !important;
+}
+
+.admin-scope .text-paper-a45,
+.admin-scope .text-ink-a45 {
+  color: #9a9a9a !important;
+}
+
+.admin-scope .text-paper-a72,
+.admin-scope .text-ink-a72 {
+  color: #d4d4d4 !important;
+}
+
+.admin-scope header,
+.admin-scope nav {
+  background-color: transparent !important;
+}
+
+.admin-scope a:hover,
+.admin-scope button:hover {
+  opacity: 1;
+}
+
+/* ---- Terminal Controls & Geometry --------------------------------------- */
+.admin-scope [class*="rounded-lg"],
+.admin-scope [class*="rounded-xl"],
+.admin-scope [class*="rounded-md"],
+.admin-scope [class*="rounded-sm"],
+.admin-scope [class~="rounded"],
+.admin-scope [class~="rounded-full"]:not([class~="w-1"]):not([class~="w-1.5"]):not([class~="w-2"]):not([class~="h-1"]):not([class~="h-1.5"]):not([class~="h-2"]) {
+  border-radius: 0 !important;
+}
+
+.admin-scope .field {
+  width: 100%;
+  height: 32px;
+  min-height: 32px;
+  background: #101010 !important;
+  border: 1px solid #3a3a3a !important;
+  border-radius: 0 !important;
+  padding: 0 10px !important;
+  font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace !important;
+  font-size: 12.5px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  color: #ececec !important;
+  outline: none;
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+
+.admin-scope textarea.field {
+  height: auto;
+  min-height: 86px;
+  padding: 8px 10px !important;
+  line-height: 1.5;
+}
+
+.admin-scope .field::placeholder {
+  font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace !important;
+  font-size: 12px !important;
+  letter-spacing: 0 !important;
+  color: #666666 !important;
+}
+
+.admin-scope .field:focus {
+  border-color: #ffa21f !important;
+  background: #141008 !important;
+}
+
+/* Inputs with a leading icon keep room for it. */
+.admin-scope .field[class*="pl-6"],
+.admin-scope .field[class*="pl-7"] {
+  padding-left: 2.2rem !important;
+}
+
+.admin-scope .field[class*="pl-8"] {
+  padding-left: 2.4rem !important;
+}
+
+.admin-scope .field[class*="pl-9"],
+.admin-scope .field[class*="pl-10"],
+.admin-scope .field[class*="pl-11"] {
+  padding-left: 2.7rem !important;
+}
+
+.admin-scope .field[class*="pl-12"] {
+  padding-left: 3rem !important;
+}
+
+.admin-scope .field-label {
+  display: block;
+  margin-bottom: 5px;
+  font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  color: #9a9a9a !important;
+}
+
+.admin-scope .field-error {
+  border-color: #ff4b43 !important;
+}
+
+.admin-scope .field-error-message {
+  color: #ff4b43 !important;
+  font-size: 11px !important;
+}
+
+/* Raw form controls inherit dark terminal input box */
+.admin-scope input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='range']):not([type='color']):not(.field),
+.admin-scope select:not(.field),
+.admin-scope textarea:not(.field) {
+  background: #101010 !important;
+  border: 1px solid #3a3a3a !important;
+  border-radius: 0 !important;
+  color: #ececec !important;
+  font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace !important;
+  font-size: 12.5px !important;
+  letter-spacing: 0 !important;
+  outline: none;
+}
+
+.admin-scope input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='range']):not([type='color']):not(.field),
+.admin-scope select:not(.field) {
+  height: 32px !important;
+  padding: 0 10px !important;
+}
+
+.admin-scope textarea:not(.field) {
+  min-height: 86px;
+  padding: 8px 10px !important;
+  line-height: 1.5;
+}
+
+.admin-scope select.field,
+.admin-scope select {
+  appearance: none;
+  padding-right: 26px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none' stroke='%23ffa21f' stroke-width='1.6'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 10px center !important;
+  cursor: pointer;
+}
+
+.admin-scope select option {
+  background: #141414 !important;
+  color: #ececec !important;
+}
+
+/* Buttons */
+.admin-scope .btn,
+.admin-scope .btn-primary,
+.admin-scope .btn-ink,
+.admin-scope .btn-secondary,
+.admin-scope .btn-ghost,
+.admin-scope .btn-ghost-ink,
+.admin-scope .btn-white {
+  min-height: 30px !important;
+  height: 30px;
+  padding: 0 13px !important;
+  border: 1px solid #444444 !important;
+  border-radius: 0 !important;
+  background: #141414 !important;
+  color: #ececec !important;
+  font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace !important;
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  gap: 7px !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: visible !important;
+  isolation: auto !important;
+  transition: border-color 0.12s ease, background 0.12s ease, color 0.12s ease;
+}
+
+.admin-scope .btn::before,
+.admin-scope .btn-primary::before,
+.admin-scope .btn-ink::before,
+.admin-scope .btn-secondary::before,
+.admin-scope .btn-ghost::before,
+.admin-scope .btn-ghost-ink::before,
+.admin-scope .btn-white::before {
+  display: none !important;
+  content: none !important;
+}
+
+.admin-scope .btn:hover {
+  border-color: #ffa21f !important;
+  color: #ffa21f !important;
+  background: #1a1508 !important;
+}
+
+.admin-scope .btn-primary,
+.admin-scope .btn-ink {
+  background: #ffa21f !important;
+  border-color: #ffa21f !important;
+  color: #000000 !important;
+  font-weight: 600 !important;
+}
+
+.admin-scope .btn-primary:hover,
+.admin-scope .btn-ink:hover {
+  background: #ffb74d !important;
+  border-color: #ffb74d !important;
+  color: #000000 !important;
+}
+
+.admin-scope .btn-secondary,
+.admin-scope .btn-ghost,
+.admin-scope .btn-ghost-ink,
+.admin-scope .btn-white {
+  background: #121212 !important;
+  border-color: #3a3a3a !important;
+  color: #ececec !important;
+}
+
+.admin-scope .btn-secondary:hover,
+.admin-scope .btn-ghost:hover,
+.admin-scope .btn-ghost-ink:hover,
+.admin-scope .btn-white:hover {
+  border-color: #ffa21f !important;
+  color: #ffa21f !important;
+  background: #181409 !important;
+}
+
+.admin-scope .btn-sm {
+  height: 26px;
+  min-height: 26px !important;
+  padding: 0 10px !important;
+  font-size: 11px !important;
+}
+
+.admin-scope .btn-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace !important;
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  color: #42c6ff !important;
+  background: none !important;
+  border: 0 !important;
+  padding: 0 !important;
+}
+
+.admin-scope .btn-text:hover {
+  color: #ffa21f !important;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.admin-scope .btn:disabled,
+.admin-scope .btn[disabled] {
+  opacity: 0.38;
+  cursor: default;
+}
+
+/* Active tabs / inverted pill-to-square controls */
+.admin-scope button[class~="bg-paper"][class~="text-ink"],
+.admin-scope a[class~="bg-paper"][class~="text-ink"],
+.admin-scope span[class~="bg-paper"][class~="text-ink"] {
+  background-color: #ffa21f !important;
+  border-color: #ffa21f !important;
+  color: #000000 !important;
+  font-weight: 600 !important;
+}
+
+/* Status indicator squares/dots using bg-paper become amber LEDs */
+.admin-scope div[class~="bg-paper"][class~="w-1.5"][class~="h-1.5"],
+.admin-scope span[class~="bg-paper"][class~="w-1.5"][class~="h-1.5"] {
+  background-color: #ffa21f !important;
+}
+
+.admin-scope input:focus,
+.admin-scope textarea:focus,
+.admin-scope select:focus {
+  border-color: #ffa21f !important;
+}
+
+/* ---- Terminal Panels & Cards --------------------------------------------- */
+.admin-scope [class~="border"][class~="border-paper-a18"] {
+  background-color: #050505 !important;
+  border-color: #2c2c2c !important;
+  border-radius: 0 !important;
+  color: #ececec;
+}
+
+/* Explicit fix for cards/banners that wrote bg-paper for a surface sheet */
+.admin-scope div[class~="border"][class~="bg-paper"]:not([class~="text-ink"]),
+.admin-scope section[class~="border"][class~="bg-paper"]:not([class~="text-ink"]),
+.admin-scope aside[class~="bg-paper"]:not([class~="text-ink"]),
+.admin-scope form[class~="bg-paper"]:not([class~="text-ink"]) {
+  background-color: #050505 !important;
+  color: #ececec !important;
+}
+
+.admin-scope [class~="border"][class~="border-paper-a20"] {
+  border-color: #3a3a3a !important;
+}
+
+.admin-scope [class~="border"][class~="border-paper"] {
+  border-color: #ffa21f !important;
+  border-radius: 0 !important;
+}
+
+.admin-scope section {
+  background: #050505;
+  border: 1px solid #2c2c2c;
+  border-radius: 0;
+  padding: 14px;
+}
+
+/* Divider / KPI grids */
+.admin-scope [class~="gap-px"][class~="bg-paper-a18"] {
+  background: #262626 !important;
+  border: 1px solid #262626 !important;
+  gap: 1px !important;
+}
+
+.admin-scope [class~="gap-px"][class~="bg-paper-a18"] > * {
+  background: #050505;
+}
+
+.admin-scope [class*="lg:grid-cols-6"][class*="gap-6"] > * {
+  background: #050505;
+  border: 1px solid #2c2c2c !important;
+  border-radius: 0;
+  padding: 12px 14px !important;
+}
+
+/* ---- Terminal Tables ----------------------------------------------------- */
+.admin-scope table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-scope thead th {
+  background: #161616;
+  border-top: 1px solid #2e2e2e;
+  border-bottom: 1px solid #2e2e2e;
+  color: #ffa21f;
+  font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace !important;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-align: left;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+.admin-scope tbody td {
+  padding: 6px 10px;
+  border-bottom: 1px solid #161616;
+  font-size: 12px;
+  color: #ececec;
+  vertical-align: middle;
+}
+
+.admin-scope tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.admin-scope tbody tr:hover td {
+  background: #10223f;
+}
+
+/* ---- Misc ---------------------------------------------------------------- */
+.admin-scope .admin-masthead,
+.admin-scope .admin-rail {
+  background-color: #050505 !important;
+  background-image: none !important;
+}
+
+.admin-scope [class*="shadow"] {
+  box-shadow: none !important;
+}
+
+.admin-scope [class*="bg-ink/8"] {
+  background-color: rgba(0, 0, 0, 0.86) !important;
+}
+
+.admin-scope ::selection {
+  background: #ffa21f;
+  color: #000000;
+}
+
+.admin-scope > * {
+  max-width: none;
+}
+
+
+
+
+/* ==========================================================================
+   THE UNBOXED HOUSE — no borders, no framed controls
+   The storefront speaks through space, scale and photography only.
+   ========================================================================== */
+
+/* The archive catalogue — an asymmetric, unframed editorial grid. */
+.catalogue-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(18px, 2.6vw, 44px);
+  row-gap: clamp(64px, 9vw, 140px);
+}
+
+.catalogue-grid > *:nth-child(4n + 1) {
+  grid-column: span 7;
+}
+
+.catalogue-grid > *:nth-child(4n + 2) {
+  grid-column: span 5;
+  margin-top: clamp(32px, 8vw, 120px);
+}
+
+.catalogue-grid > *:nth-child(4n + 3) {
+  grid-column: span 5;
+}
+
+.catalogue-grid > *:nth-child(4n + 4) {
+  grid-column: span 7;
+  margin-top: clamp(32px, 8vw, 120px);
+}
+
+@media (max-width: 900px) {
+  .catalogue-grid {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 64px;
+  }
+  .catalogue-grid > * {
+    grid-column: 1 / -1 !important;
+    margin-top: 0 !important;
+  }
+}
+
+.storefront :where(*) {
+  border-color: transparent !important;
+}
+
+.storefront :where(.underline) {
+  text-decoration: none !important;
+}
+
+.btn,
+.btn-primary,
+.btn-ink,
+.btn-secondary,
+.btn-ghost,
+.btn-ghost-ink,
+.btn-white {
+  min-height: 44px;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  color: var(--ink);
+  font-family: var(--font-ui-stack);
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  gap: 0.85rem;
+  overflow: visible;
+  isolation: auto;
+  transition: opacity 400ms var(--ease-out-expo);
+}
+
+.btn::before,
+.btn-primary::before,
+.btn-ink::before,
+.btn-secondary::before,
+.btn-ghost::before,
+.btn-ghost-ink::before,
+.btn-white::before {
+  display: none;
+}
+
+.btn:hover,
+.btn-primary:hover,
+.btn-ink:hover,
+.btn-secondary:hover,
+.btn-ghost:hover,
+.btn-ghost-ink:hover,
+.btn-white:hover {
+  opacity: 0.45;
+  color: var(--ink);
+  border-color: transparent;
+}
+
+.on-ink .btn-primary,
+.on-ink .btn-ink,
+.on-ink .btn-secondary,
+.on-ink .btn-ghost,
+.on-ink .btn-white {
+  background: transparent !important;
+  border: 0 !important;
+  color: var(--paper);
+}
+
+.on-ink .btn-primary:hover,
+.on-ink .btn-ink:hover,
+.on-ink .btn-secondary:hover,
+.on-ink .btn-ghost:hover,
+.on-ink .btn-white:hover {
+  color: var(--paper);
+  opacity: 0.5;
+}
+
+.btn-sm {
+  min-height: 36px;
+}
+
+.btn-lg {
+  min-height: 58px;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.4vw, 34px);
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  gap: 1.2rem;
+  line-height: 1;
+}
+
+.btn-lg svg {
+  width: 18px;
+  height: 18px;
+}
+
+.btn-text,
+.link-line,
+.link-underline {
+  border-bottom: 0 !important;
+  padding-bottom: 0;
+}
+
+.btn-text:hover,
+.link-line:hover,
+.link-underline:hover {
+  opacity: 0.45;
+}
+
+.btn-text span[aria-hidden],
+.btn-text .arrow {
+  transition: transform 450ms var(--ease-out-expo);
+}
+
+.btn-text:hover span[aria-hidden],
+.btn-text:hover .arrow {
+  transform: translateX(6px);
+}
+
+.pill,
+.tag,
+.chip {
+  min-height: 0;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  color: inherit;
+  font-family: var(--font-ui-stack);
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  opacity: 0.45;
+  transition: opacity 400ms var(--ease-out-expo);
+}
+
+.pill:hover,
+.tag:hover,
+.chip:hover,
+.chip[data-active="true"],
+.pill-dark {
+  background: transparent !important;
+  border: 0 !important;
+  color: inherit;
+  opacity: 1;
+}
+
+.size-option {
+  width: 44px;
+  height: 44px;
+  border: 0 !important;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-mono-stack);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  transition: background 350ms var(--ease-out-expo), color 350ms var(--ease-out-expo);
+}
+
+.size-option:hover {
+  background: var(--ink-a06);
+}
+
+.size-option[data-selected="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.size-option[data-unavailable="true"] {
+  opacity: 0.28;
+  background-image: none;
+}
+
+.field {
+  border: 0 !important;
+  background: rgba(0, 0, 0, 0.055);
+  padding: 16px 16px;
+}
+
+.field:focus {
+  background: rgba(0, 0, 0, 0.085);
+}
+
+.rule,
+.rule-invert,
+.hairline,
+.hairline-invert {
+  border: 0 !important;
+  background: transparent !important;
+  height: 0;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .hero-stage {
+    min-height: 520px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --nav-h: 64px;
+    --gutter: 18px;
+  }
+  body {
+    font-size: 14px;
+  }
+  .display-xl,
+  .display {
+    line-height: 0.9;
+  }
+}
+
+@media (max-width: 380px) {
+  .cinematic-hero-title {
+    font-size: clamp(38px, 12.2vw, 46px) !important;
+    line-height: 0.86;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal,
+  .reveal-stagger > * {
+    opacity: 1;
+    transform: none;
+  }
+  .marquee-track {
+    animation: none;
+  }
+  .hero-slide__media {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* ==========================================================================
+   ADMIN AUTHENTICATION — ZEJESH TERMINAL PERIMETER
+   Sign-in, terminal lock and restricted-access gates share the dark
+   Bloomberg Terminal language: black canvas, amber telemetry, sharp rules.
+   ========================================================================== */
+.admin-scope.admin-auth-page {
+  --color-ink: #ececec;
+  --color-paper: #050505;
+  --color-ink-a88: rgba(236, 236, 236, 0.9);
+  --color-ink-a72: rgba(236, 236, 236, 0.78);
+  --color-ink-a64: rgba(236, 236, 236, 0.7);
+  --color-ink-a55: rgba(236, 236, 236, 0.62);
+  --color-ink-a45: #9a9a9a;
+  --color-ink-a40: #888888;
+  --color-ink-a20: #3a3a3a;
+  --color-ink-a18: #2c2c2c;
+  --color-ink-a14: #222222;
+  --color-ink-a10: #181818;
+  --color-ink-a06: #0d0d0d;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #000000 !important;
+  color: #ececec !important;
+}
+
+.admin-auth-bar {
+  height: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: #090909 !important;
+  border-bottom: 2px solid #9c1a1f;
+}
+
+.admin-auth-bar .label {
+  color: #ffa21f !important;
+  font-size: 11px !important;
+  letter-spacing: 0.08em !important;
+}
+
+.admin-auth-page .text-ink {
+  color: #ececec !important;
+}
+
+.admin-auth-page .border-ink {
+  border-color: #ffa21f !important;
+}
+
+.admin-auth-page .border-ink-a18 {
+  border-color: #2c2c2c !important;
+}
+
+.admin-auth-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.admin-auth-panel {
+  width: 100%;
+}
+
+.admin-auth-card {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  background: #050505 !important;
+  border: 1px solid #333333;
+  border-top: 2px solid #ffa21f;
+  border-radius: 0;
+  padding: 32px;
+}
+
+.admin-auth-card h1 {
+  font-size: 26px !important;
+  line-height: 1.15 !important;
+  color: #ffa21f !important;
+}
+
+.admin-auth-page .body-copy {
+  font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace !important;
+  font-size: 12px !important;
+  line-height: 1.6 !important;
+  font-weight: 400 !important;
+  max-width: none !important;
+  color: #a0a0a0 !important;
+}
+
+.admin-auth-page .field {
+  height: 36px !important;
+  min-height: 36px !important;
+}
+
+.admin-auth-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 20px;
+  background: #070707;
+  border-top: 1px solid #262626;
+  font-size: 11px;
+  color: #888888;
+}
+
+@media (max-width: 640px) {
+  .admin-auth-bar {
+    height: 44px;
+    padding: 0 14px;
+  }
+  .admin-auth-main {
+    padding: 20px 14px;
+  }
+  .admin-auth-card {
+    padding: 20px;
+  }
+  .admin-auth-card h1 {
+    font-size: 22px !important;
+  }
+  .admin-auth-foot {
+    padding: 12px 14px;
+  }
+}
+
+.admin-auth-page section.admin-auth-panel {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+.admin-gate-page > [class~="max-w-md"] {
+  max-width: 28rem !important;
+}
+.admin-gate-page > [class~="max-w-5xl"] {
+  max-width: 64rem !important;
+}
+
+.admin-scope .field-label[class~="flex"] {
+  display: flex !important;
+  align-items: center;
+}

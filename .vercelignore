@@ -1,0 +1,26 @@
+# Build output and dependencies
+node_modules
+dist
+.git
+.vercel
+coverage
+test-results
+
+# Local-only working material
+Louis_Vuitton-main
+Louis_Vuitton-main.zip
+Screenshots
+Photos
+capture.tmp.mjs
+capture-full.tmp.mjs
+capture-mobile.tmp.mjs
+capture-devices.tmp.mjs
+responsive.tmp.mjs
+
+# Root-level reference images and screenshots only.
+# Public media lives in /public and is intentionally deployed.
+/*.png
+/*.jpg
+/*.jpeg
+/*.webp
+/*.mp4
